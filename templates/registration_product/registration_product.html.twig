@@ -1,14 +1,18 @@
-{% extends 'base.html.twig' %}
+{% extends 'navbar_admin.html.twig' %}
 
-{% block title %}Enregistrement de produits{% endblock %}
+{% block title %}{{ parent() }} - Enregistrement de produits{% endblock %}
 
 {% block body %}
+    {{ parent() }}
     <div class="store">
         <div class="container">
+            {% if textAlert is defined and classAlert is defined %}
+                <div class="alert {{ classAlert }} rounded-0 text-center" role="alert">{{ textAlert }}</div>
+            {% endif %}
             <div class="row">
                 <div class="col-lg-6">
-                    <section>
-                        <h1 class="display-4">Enregistrement de produits</h1>
+                    <section class="border p-3 shadow-sm">
+                        <h1 class="display-4 text-center">Enregistrement de produits</h1>
                         <article>
                             {{ form_start(formProduct) }}
                             <div class="form-group">
@@ -25,15 +29,15 @@
                             </div>
                             <div class="form-group">
                                 {{ form_label(formProduct.image, '') }}
-                                {{ form_widget(formProduct.image, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_widget(formProduct.image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.color, '') }}
-                                {{ form_widget(formProduct.color, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(formProduct.color, 'Couleur') }}
+                                {{ form_widget(formProduct.color, {'attr': {'class': 'custom-select rounded-0'}}) }}
                             </div>
                             <div class="form-group">
                                 {{ form_label(formProduct.isNew, 'Est-ce une nouveauté ?') }}
-                                {{ form_widget(formProduct.isNew, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_widget(formProduct.isNew, {'attr': {'class': 'custom-select rounded-0'}}) }}
                             </div>
                             <div class="form-group">
                                 {{ form_label(formProduct.quantity, 'Quantité disponible') }}
@@ -47,14 +51,14 @@
                                 {{ form_label(formProduct.priceProfessionals, 'Prix pour professionnels') }}
                                 {{ form_widget(formProduct.priceProfessionals, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
                             {{ form_end(formProduct) }}
                         </article>
                     </section>
                 </div>
                 <div class="col-lg-6">
-                    <section>
-                        <h1 class="display-4">Création de couleurs</h1>
+                    <section class="border p-3 shadow-sm">
+                        <h1 class="display-4 text-center">Création de couleurs</h1>
                         <article>
                             {{ form_start(formColor) }}
                             <div class="form-group">
@@ -65,13 +69,12 @@
                                 {{ form_label(formColor.colorCode, 'Code couleur') }}
                                 {{ form_widget(formColor.colorCode, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <button type="submit" class="btn btn-primary rounded-0 m-auto">Enregistrer</button>
                             {{ form_end(formColor) }}
                         </article>
                     </section>
                 </div>
             </div>
-
         </div>
     </div>
 {% endblock %}

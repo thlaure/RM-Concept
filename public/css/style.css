@@ -1,0 +1,16 @@
+.display-4 {
+    font-size: 2.5rem;
+    margin-bottom: 2%;
+}
+
+.store {
+    background-color: #f1f1f1;
+    padding-top: 1%;
+    box-shadow: inset 0 2px 5px 0 rgba(0,0,0,.125);
+    padding-bottom: 50px;
+    margin-bottom: 50px;
+}
+
+.border.p-3.shadow-sm {
+    background-color: white;
+}

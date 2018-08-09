@@ -7,6 +7,8 @@ use App\Entity\Color;
 use App\Form\ColorType;
 use App\Form\ProductType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,31 +36,159 @@ class RegistrationProductController extends AbstractController
         $formProduct->handleRequest($request);
         $formColor->handleRequest($request);
         if ($formProduct->isSubmitted() && $formProduct->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($ball);
-            $entityManager->flush();
-            return $this->render(
+            $name = ucwords($formProduct['name']->getData());
+            $image = $formProduct['image']->getData();
+            $quantity = $formProduct['quantity']->getData();
+            $reference = $formProduct['reference']->getData();
+            $referenceExists = $this->checkReferenceExistence($reference);
+            if ($this->testImageFormat($image) && $quantity > 0 && !$referenceExists) {
+                $ball->setName($name);
+                $ball->setImage($this->imageProcessing($image));
+                $this->persistObject($ball);
+                return $this->returnRender($formProduct, $formColor, 'good');
+            } elseif ($quantity <= 0) {
+                return $this->returnRender($formProduct, $formColor, 'quantity');
+            } elseif ($referenceExists) {
+                return $this->returnRender($formProduct, $formColor, 'reference');
+            }
+            else {
+                return $this->returnRender($formProduct, $formColor, 'image');
+            }
+        } elseif ($formColor->isSubmitted() && $formColor->isValid()) {
+            $name = ucwords($formColor['name']->getData());
+            $color->setName($name);
+            $this->persistObject($color);
+            return $this->returnRender($formProduct, $formColor, 'good');
+        }
+        return $this->returnRender($formProduct, $formColor, '');
+    }
+
+    /**
+     * Permet de faire persister des objets en base de données.
+     *
+     * @param $object
+     */
+    private function persistObject($object)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($object);
+        $entityManager->flush();
+    }
+
+    /**
+     * Vérifie le fait que le fichier importé soit bien une image.
+     *
+     * @param UploadedFile $uploadedFile
+     *
+     * @return bool|null
+     */
+    private function testImageFormat(UploadedFile $uploadedFile): ?bool
+    {
+        $extensionsAllowed = array('jpg', 'jpeg', 'png', 'gif');
+        $extensionUploadedImage = $uploadedFile->guessExtension();
+        return in_array($extensionUploadedImage, $extensionsAllowed);
+    }
+
+    /**
+     * On donne un nom unique au fichier uploadé, et on le déplace dans le dossier
+     * du projet qui contiendra les images.
+     * Retourne le nouveau nom du fichier.
+     *
+     * @param UploadedFile $uploadedFile Fichier importé.
+     *
+     * @return string
+     */
+    private function imageProcessing(UploadedFile $uploadedFile)
+    {
+        $imageName = $this->generateUniqueFileName() . '.' . $uploadedFile->guessExtension();
+        $uploadedFile->move($this->getParameter('balls_directory'), $imageName);
+        return $imageName;
+    }
+
+    /**
+     * Génère un nom aléatoire et complexe pour le fichier importé.
+     *
+     * @return null|string
+     */
+    private function generateUniqueFileName(): ?string
+    {
+        return md5(uniqid());
+    }
+
+    /**
+     * Vérifie l'existence de la référence en base de données.
+     *
+     * @param string $reference Référence dont il faut contrôler l'existence.
+     *
+     * @return bool|null
+     */
+    private function checkReferenceExistence(string $reference): ?bool
+    {
+        $repository = $this->getDoctrine()->getRepository(Ball::class);
+        $result = $repository->findOneBy(
+            array(
+                'reference' => $reference
+            )
+        );
+        return $result !== null;
+    }
+
+    private function returnRender(FormInterface $formProduct, FormInterface $formColor,string $alert)
+    {
+        //$arrayAlerts = array('good', 'reference', 'name', 'image', 'quantity');
+        if ($alert === 'good') {
+            $render = $this->render(
                 'registration_product/registration_product.html.twig',array(
                     'formProduct' => $formProduct->createView(),
-                    'formColor' => $formColor->createView()
+                    'formColor' => $formColor->createView(),
+                    'textAlert' => 'Le produit a bien été enregistré.',
+                    'classAlert' => 'alert-success'
                 )
             );
-        } elseif ($formColor->isSubmitted() && $formColor->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($color);
-            $entityManager->flush();
-            return $this->render(
+        } elseif ($alert === 'reference') {
+            $render = $this->render(
+                'registration_product/registration_product.html.twig',array(
+                    'formProduct' => $formProduct->createView(),
+                    'formColor' => $formColor->createView(),
+                    'textAlert' => 'La référence saisie est déjà associée à un produit.',
+                    'classAlert' => 'alert-warning'
+                )
+            );
+        } elseif ($alert === 'name') {
+            $render = $this->render(
+                'registration_product/registration_product.html.twig',array(
+                    'formProduct' => $formProduct->createView(),
+                    'formColor' => $formColor->createView(),
+                    'textAlert' => 'Le nom saisi est déjà associé à un produit.',
+                    'classAlert' => 'alert-warning'
+                )
+            );
+        } elseif ($alert === 'quantity') {
+            $render = $this->render(
+                'registration_product/registration_product.html.twig',array(
+                    'formProduct' => $formProduct->createView(),
+                    'formColor' => $formColor->createView(),
+                    'textAlert' => 'La quantité disponible saisie doit être supérieure à zéro.',
+                    'classAlert' => 'alert-warning'
+                )
+            );
+        } elseif ($alert === 'image') {
+            $render = $this->render(
+                'registration_product/registration_product.html.twig',array(
+                    'formProduct' => $formProduct->createView(),
+                    'formColor' => $formColor->createView(),
+                    'textAlert' => 'L\'image importée doit être une image.',
+                    'classAlert' => 'alert-warning'
+                )
+            );
+        } else {
+            $render = $this->render(
                 'registration_product/registration_product.html.twig',array(
                     'formProduct' => $formProduct->createView(),
                     'formColor' => $formColor->createView()
                 )
             );
         }
-        return $this->render(
-            'registration_product/registration_product.html.twig',array(
-                'formProduct' => $formProduct->createView(),
-                'formColor' => $formColor->createView()
-            )
-        );
+        return $render;
     }
 }
