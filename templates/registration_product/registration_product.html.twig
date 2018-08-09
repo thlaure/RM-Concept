@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Enregistrement de produits{% endblock %}
+
+{% block body %}
+    <div class="store">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <section>
+                        <h1 class="display-4">Enregistrement de produits</h1>
+                        <article>
+                            {{ form_start(formProduct) }}
+                            <div class="form-group">
+                                {{ form_label(formProduct.name, 'Nom du produit') }}
+                                {{ form_widget(formProduct.name, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.reference, 'Référence') }}
+                                {{ form_widget(formProduct.reference, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.description, '') }}
+                                {{ form_widget(formProduct.description, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.image, '') }}
+                                {{ form_widget(formProduct.image, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.color, '') }}
+                                {{ form_widget(formProduct.color, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.isNew, 'Est-ce une nouveauté ?') }}
+                                {{ form_widget(formProduct.isNew, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.quantity, 'Quantité disponible') }}
+                                {{ form_widget(formProduct.quantity, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.priceIndividuals, 'Prix pour particuliers') }}
+                                {{ form_widget(formProduct.priceIndividuals, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formProduct.priceProfessionals, 'Prix pour professionnels') }}
+                                {{ form_widget(formProduct.priceProfessionals, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            {{ form_end(formProduct) }}
+                        </article>
+                    </section>
+                </div>
+                <div class="col-lg-6">
+                    <section>
+                        <h1 class="display-4">Création de couleurs</h1>
+                        <article>
+                            {{ form_start(formColor) }}
+                            <div class="form-group">
+                                {{ form_label(formColor.name, 'Nom de la couleur') }}
+                                {{ form_widget(formColor.name, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_label(formColor.colorCode, 'Code couleur') }}
+                                {{ form_widget(formColor.colorCode, {'attr': {'class': 'form-control rounded-0'}}) }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            {{ form_end(formColor) }}
+                        </article>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
