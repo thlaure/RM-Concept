@@ -22,7 +22,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Class ProductType.
  *
- * @package App\Form
+ * @category Symfony4
+ * @package  App\Form
+ * @author   Display Name <thomaslaure3@gmail.com>
+ * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
+ * @link     https://symfony.com/
  */
 class ProductType extends AbstractType
 {

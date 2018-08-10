@@ -16,11 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class RegistrationProductController.
  *
- * @package App\Controller
+ * @category Symfony4
+ * @package  App\Controller
+ * @author   Display Name <thomaslaure3@gmail.com>
+ * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
+ * @link     https://symfony.com/
  */
 class RegistrationProductController extends AbstractController
 {
     /**
+     * Affiche la page d'enregistrement de produits.
+     *
      * @Route("/registration/product", name="registration_product")
      *
      * @param Request $request
@@ -133,6 +139,15 @@ class RegistrationProductController extends AbstractController
         return $result !== null;
     }
 
+    /**
+     * Renvoie le message approprié en fonction du besoin.
+     *
+     * @param FormInterface $formProduct Formulaire de création de produits.
+     * @param FormInterface $formColor Formulaire de création de couleurs.
+     * @param string $alert
+     *
+     * @return Response
+     */
     private function returnRender(FormInterface $formProduct, FormInterface $formColor,string $alert)
     {
         //$arrayAlerts = array('good', 'reference', 'name', 'image', 'quantity');

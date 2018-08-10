@@ -9,11 +9,7 @@
                         <a class="nav-link" href="#"><i class="far fa-comment-dots"></i> Contactez-nous</a>
                     </li>
                     <li class="nav-item">
-                        {% if client.isConnecte = 1 %}
-                            <a class="nav-link" href="#"><i class="far fa-user"></i> {{ client.prenom }} {{ client.nom|upper }}</a>
-                        {% else %}
-                            <a class="nav-link" href="#"><i class="far fa-user"></i> Mon compte client</a>
-                        {% endif %}
+                        <a class="nav-link" href="#"><i class="far fa-user"></i> Mon compte client</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Panier (0)</a>
@@ -32,15 +28,15 @@
                         <a class="nav-link" href="#"><i class="fa fa-home" aria-hidden="true"></i> Accueil</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-golf-ball"></i> Balles</a>
+                        <a class="nav-link" href="{{ path('shop_customizable-balls') }}"><i class="fas fa-golf-ball"></i> Balles personnalisables</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-building"></i> Espace entreprise</a>
+                        <a class="nav-link" href="{{ path('shop_company-area') }}"><i class="fas fa-building"></i> Espace entreprise</a>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Rechercher" aria-label="Rechercher">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    <input class="form-control mr-sm-2 rounded-0" type="search" placeholder="Rechercher" aria-label="Rechercher">
+                    <button class="btn btn-outline-success my-2 my-sm-0 rounded-0" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
                 </form>
             </div>
         </nav>

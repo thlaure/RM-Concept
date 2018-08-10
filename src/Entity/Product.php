@@ -5,11 +5,21 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Class Product.
+ *
  * @ORM\MappedSuperclass()
+ *
+ * @category Symfony4
+ * @package  App\Entity
+ * @author   Display Name <thomaslaure3@gmail.com>
+ * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
+ * @link     https://symfony.com/
  */
 abstract class Product
 {
     /**
+     * ID du produit.
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -17,41 +27,57 @@ abstract class Product
     private $id;
 
     /**
+     * Nom du produit.
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
+     * Référence du produit.
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $reference;
 
     /**
+     * Description du produit.
+     *
      * @ORM\Column(type="text")
      */
     private $description;
 
     /**
+     * Image du produit.
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $image;
 
     /**
+     * Etat de nouveauté du produit.
+     *
      * @ORM\Column(type="boolean")
      */
     private $isNew;
 
     /**
+     * Quantité disponible du produit.
+     *
      * @ORM\Column(type="integer")
      */
     private $quantity;
 
     /**
+     * Prix du produit pour particuliers.
+     *
      * @ORM\Column(type="float")
      */
     private $priceIndividuals;
 
     /**
+     * Prix du produit pour professionnels.
+     *
      * @ORM\Column(type="float")
      */
     private $priceProfessionals;
