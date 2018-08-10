@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Class BallRepository.
+ *
  * @method Ball|null find($id, $lockMode = null, $lockVersion = null)
  * @method Ball|null findOneBy(array $criteria, array $orderBy = null)
  * @method Ball[]    findAll()
@@ -14,6 +16,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class BallRepository extends ServiceEntityRepository
 {
+    /**
+     * BallRepository constructor.
+     *
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Ball::class);

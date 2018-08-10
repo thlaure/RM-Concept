@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Class ColorRepository.
+ *
  * @method Color|null find($id, $lockMode = null, $lockVersion = null)
  * @method Color|null findOneBy(array $criteria, array $orderBy = null)
  * @method Color[]    findAll()
@@ -14,6 +16,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class ColorRepository extends ServiceEntityRepository
 {
+    /**
+     * ColorRepository constructor.
+     *
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Color::class);

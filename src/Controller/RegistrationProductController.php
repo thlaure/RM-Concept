@@ -42,13 +42,12 @@ class RegistrationProductController extends AbstractController
         $formProduct->handleRequest($request);
         $formColor->handleRequest($request);
         if ($formProduct->isSubmitted() && $formProduct->isValid()) {
-            $name = ucwords($formProduct['name']->getData());
             $image = $formProduct['image']->getData();
             $quantity = $formProduct['quantity']->getData();
             $reference = $formProduct['reference']->getData();
             $referenceExists = $this->checkReferenceExistence($reference);
             if ($this->testImageFormat($image) && $quantity > 0 && !$referenceExists) {
-                $ball->setName($name);
+                $ball->setName(ucwords($ball->getName()));
                 $ball->setImage($this->imageProcessing($image));
                 $this->persistObject($ball);
                 return $this->returnRender($formProduct, $formColor, 'good');
@@ -74,7 +73,7 @@ class RegistrationProductController extends AbstractController
      *
      * @param $object
      */
-    private function persistObject($object)
+    private function persistObject($object): void
     {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($object);
@@ -104,7 +103,7 @@ class RegistrationProductController extends AbstractController
      *
      * @return string
      */
-    private function imageProcessing(UploadedFile $uploadedFile)
+    private function imageProcessing(UploadedFile $uploadedFile): ?string
     {
         $imageName = $this->generateUniqueFileName() . '.' . $uploadedFile->guessExtension();
         $uploadedFile->move($this->getParameter('balls_directory'), $imageName);
@@ -148,7 +147,7 @@ class RegistrationProductController extends AbstractController
      *
      * @return Response
      */
-    private function returnRender(FormInterface $formProduct, FormInterface $formColor,string $alert)
+    private function returnRender(FormInterface $formProduct, FormInterface $formColor,string $alert): ?Response
     {
         //$arrayAlerts = array('good', 'reference', 'name', 'image', 'quantity');
         if ($alert === 'good') {

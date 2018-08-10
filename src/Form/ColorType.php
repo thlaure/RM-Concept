@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Thomas
- * Date: 09/08/2018
- * Time: 16:38
- */
 
 namespace App\Form;
 
@@ -27,10 +21,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ColorType extends AbstractType
 {
     /**
+     * Crée le formulaire permettant d'enregistrer des couleurs.
+     *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class)
@@ -40,7 +36,7 @@ class ColorType extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array('data_class' => Color::class));
     }

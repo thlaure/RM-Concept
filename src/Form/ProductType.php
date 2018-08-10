@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Thomas
- * Date: 09/08/2018
- * Time: 16:21
- */
 
 namespace App\Form;
 
@@ -31,10 +25,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ProductType extends AbstractType
 {
     /**
+     * Crée le formulaire permettant d'enregistrer des produits.
+     *
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('name', TextType::class)
@@ -63,7 +59,7 @@ class ProductType extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array('data_class' => Product::class));
     }

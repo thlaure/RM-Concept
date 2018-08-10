@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class Customer.
@@ -15,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
  * @link     https://symfony.com/
  */
-abstract class Customer
+abstract class Customer implements UserInterface, \Serializable
 {
     /**
      * ID du client.
@@ -102,6 +104,29 @@ abstract class Customer
      * @ORM\OneToOne(targetEntity="App\Entity\ShoppingCart", inversedBy="customer", cascade={"persist", "remove"})
      */
     private $shoppingCart;
+
+    /**
+     * Etat de connexion du client.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * Mot de passe en clair du client.
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max=4096)
+     */
+    private $plainPassword;
+
+    /**
+     * Customer constructor.
+     */
+    public function __construct()
+    {
+        $this->isActive = true;
+    }
 
     /**
      * @return int|null
@@ -321,6 +346,7 @@ abstract class Customer
 
     /**
      * @param ShoppingCart|null $shoppingCart
+     *
      * @return Customer
      */
     public function setShoppingCart(?ShoppingCart $shoppingCart): self
@@ -328,5 +354,102 @@ abstract class Customer
         $this->shoppingCart = $shoppingCart;
 
         return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     *
+     * @return Customer
+     */
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSalt()
+    {
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     *
+     */
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->email,
+            $this->password
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     *
+     * @param $serialized
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->email,
+            $this->password
+        ) = unserialize($serialized, array('allowed_classes' => false));
+    }
+
+    /**
+     * Accesseur du mot de passe en clair du client.
+     *
+     * @return null|string
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Mutateur du mot de passe en clair du client.
+     *
+     * @param string $plainPassword
+     */
+    public function setPlainPassword(string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
     }
 }

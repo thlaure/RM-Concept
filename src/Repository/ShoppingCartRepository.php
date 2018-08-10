@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Class ShoppingCartRepository.
+ *
  * @method ShoppingCart|null find($id, $lockMode = null, $lockVersion = null)
  * @method ShoppingCart|null findOneBy(array $criteria, array $orderBy = null)
  * @method ShoppingCart[]    findAll()
@@ -14,6 +16,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class ShoppingCartRepository extends ServiceEntityRepository
 {
+    /**
+     * ShoppingCartRepository constructor.
+     *
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, ShoppingCart::class);

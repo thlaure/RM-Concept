@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Class IndividualRepository.
+ *
  * @method Individual|null find($id, $lockMode = null, $lockVersion = null)
  * @method Individual|null findOneBy(array $criteria, array $orderBy = null)
  * @method Individual[]    findAll()
@@ -14,6 +16,11 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class IndividualRepository extends ServiceEntityRepository
 {
+    /**
+     * IndividualRepository constructor.
+     *
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Individual::class);

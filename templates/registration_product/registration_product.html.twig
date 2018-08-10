@@ -4,7 +4,7 @@
 
 {% block body %}
     {{ parent() }}
-    <div class="store">
+    <div class="store p-3">
         <div class="container">
             {% if textAlert is defined and classAlert is defined %}
                 <div class="alert {{ classAlert }} rounded-0 text-center" role="alert">{{ textAlert }}</div>
@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-lg-6 mt-4">
                     <section class="border p-3 shadow-sm">
-                        <h1 class="display-4 text-center">Enregistrement de produits</h1>
+                        <h1 class="display-4 text-center mb-2">Enregistrement de produits</h1>
                         <article>
                             {{ form_start(formProduct) }}
                             <div class="form-group">
@@ -51,14 +51,16 @@
                                 {{ form_label(formProduct.priceProfessionals, 'Prix pour professionnels') }}
                                 {{ form_widget(formProduct.priceProfessionals, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
-                            <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
+                            </div>
                             {{ form_end(formProduct) }}
                         </article>
                     </section>
                 </div>
                 <div class="col-lg-6 mt-4">
                     <section class="border p-3 shadow-sm">
-                        <h1 class="display-4 text-center">Création de couleurs</h1>
+                        <h1 class="display-4 text-center mb-2">Création de couleurs</h1>
                         <article>
                             {{ form_start(formColor) }}
                             <div class="form-group">
@@ -69,7 +71,9 @@
                                 {{ form_label(formColor.colorCode, 'Code couleur') }}
                                 {{ form_widget(formColor.colorCode, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
-                            <button type="submit" class="btn btn-primary rounded-0 m-auto">Enregistrer</button>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary rounded-0 m-auto">Enregistrer</button>
+                            </div>
                             {{ form_end(formColor) }}
                         </article>
                     </section>

@@ -1,13 +1,27 @@
 security:
+    encoders:
+        App\Entity\Customer:
+            algorithm: bcrypt
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         in_memory: { memory: ~ }
+        our_db_provider:
+            entity:
+                class: App\Entity\Individual
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: true
+            pattern:    ^/
+            http_basic: ~
+            provider: our_db_provider
+            form_login:
+                login_path: login
+                check_path: login
+                default_target_path: /shop/customizable-balls
 
             # activate different ways to authenticate
 

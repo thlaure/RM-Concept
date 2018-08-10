@@ -1,0 +1,37 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Login{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store p-3">
+        <div class="container">
+            <section class="w-50 m-auto">
+                <h1 class="display-4 text-center">Mon compte client</h1>
+                <article class="border p-3 shadow-sm">
+                    <h4 class="text-center">Connectez-vous à votre compte</h4>
+                    {% if error %}
+                        <div class="alert alert-warning" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+                    <form action="{{ path('login') }}" method="post">
+                        <div class="form-group">
+                            <label for="username">Adresse mail</label>
+                            <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com" value="{{ lastUsername }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input class="form-control rounded-0" type="password" id="password" name="_password">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary rounded-0">CONNEXION</button>
+                        </div>
+                    </form>
+                </article>
+                <article class="border p-3 shadow-sm my-5">
+                    <h4 class="text-center">Pas de compte ?</h4>
+                    <p class="lead text-center"><a href="{{ path('registration') }}">Créez-en un</a></p>
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}

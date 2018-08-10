@@ -1,0 +1,68 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Création de compte client{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store p-3">
+        <div class="container">
+            {% if textAlert is defined and classAlert is defined %}
+                <div class="alert {{ classAlert }} rounded-0 text-center" role="alert">{{ textAlert }}</div>
+            {% endif %}
+            <section class="border p-3 shadow-sm w-50 m-auto">
+                <h1 class="display-4">Création de compte particulier</h1>
+                <article>
+                    {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_label(form.name, 'Nom *') }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.firstName, 'Prénom *') }}
+                        {{ form_widget(form.firstName, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.address, 'Adresse postale *') }}
+                        {{ form_widget(form.address, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.addressComplement, 'Complément d\'adresse (facultatif)') }}
+                        {{ form_widget(form.addressComplement, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.postalCode, 'Code postal *') }}
+                        {{ form_widget(form.postalCode, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.city, 'Ville *') }}
+                        {{ form_widget(form.city, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.phoneNumber, 'Numéro de téléphone *') }}
+                        {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.email, 'Adresse mail *') }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.plainPassword.first, 'Mot de passe *') }}
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.plainPassword.second, 'Confirmez le mot de passe *') }}
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
+                    </div>
+                    {{ form_end(form) }}
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/rmconcept.js') }}"></script>
+{% endblock %}
