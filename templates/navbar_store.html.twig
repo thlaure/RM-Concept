@@ -8,12 +8,28 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="far fa-comment-dots"></i> Contactez-nous</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('login') }}"><i class="far fa-user"></i> Mon compte client</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Panier (0)</a>
-                    </li>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user"></i> {{ app.user.firstName }} {{ app.user.name }}
+                            </a>
+                            <div class="dropdown-menu rounded-0" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Mon compte</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ path('logout') }}"><i class="fas fa-sign-out-alt"></i> DECONNEXION</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Panier ({{ app.user.shoppingCart.products|length }})</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('login') }}"><i class="far fa-user"></i> Mon compte client</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#"><i class="fas fa-shopping-cart"></i> Panier</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>

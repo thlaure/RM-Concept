@@ -8,6 +8,7 @@
         <div class="container">
             <section>
                 <h1 class="display-4 text-center mb-2">Balles personnalisables</h1>
+                {{ dump() }}
                 <article>
                     <div class="card-group">
                         {% for product in products %}
@@ -52,10 +53,14 @@
                                                     <p class="lead font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
                                                     <button type="button" class="btn btn-info rounded-0"><i class="fas fa-paint-brush"></i> Personnaliser</button>
                                                     <div class="row p-3">
-                                                        <label for="inputQuantity">Quantité</label>
-                                                        <input class="form-control rounded-0" type="number" name="quantity" min="1" id="inputQuantity" />
+                                                        <form action="{{ path('shopping_cart') }}" method="post">
+                                                            <div class="form-group">
+                                                                <label for="inputQuantity">Quantité</label>
+                                                                <input class="form-control rounded-0" type="number" name="quantity" min="1" id="inputQuantity" />
+                                                            </div>
+                                                            <button type="button" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
+                                                        </form>
                                                     </div>
-                                                    <button type="button" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
                                                 </div>
                                             </div>
                                             <br />

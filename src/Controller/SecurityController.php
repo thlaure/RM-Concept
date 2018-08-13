@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ShoppingCart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,9 +35,22 @@ class SecurityController extends AbstractController
         return $this->render(
             'security/login.html.twig', array(
                 'lastUsername' => $lastUsername,
-                'error' => $error,
-                ''
+                'error' => $error
             )
+        );
+    }
+
+    /**
+     * Affiche une page après déconnexion du client.
+     *
+     * @Route("/logout", name="logout")
+     *
+     * @return Response
+     */
+    public function logout()
+    {
+        return $this->render(
+            'security/logout.html.twig'
         );
     }
 }

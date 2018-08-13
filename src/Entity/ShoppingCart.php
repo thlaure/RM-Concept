@@ -66,7 +66,7 @@ class ShoppingCart
     /**
      * Client à qui appartient le panier.
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\Customer", mappedBy="shoppingCart", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\Individual", mappedBy="shoppingCart", cascade={"persist", "remove"})
      */
     private $customer;
 
@@ -131,7 +131,8 @@ class ShoppingCart
      */
     public function getProductQuantity(): ?int
     {
-        return $this->productQuantity;
+        //return $this->productQuantity;
+        return count($this->products);
     }
 
     /**

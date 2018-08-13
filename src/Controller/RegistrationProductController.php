@@ -62,8 +62,13 @@ class RegistrationProductController extends AbstractController
         } elseif ($formColor->isSubmitted() && $formColor->isValid()) {
             $name = ucwords($formColor['name']->getData());
             $color->setName($name);
-            $this->persistObject($color);
-            return $this->returnRender($formProduct, $formColor, 'good');
+            $colorExists = $this->checkColorExistence($name, $formColor['colorCode']->getData());
+            if (!$colorExists) {
+                $this->persistObject($color);
+                return $this->returnRender($formProduct, $formColor, 'good');
+            } else {
+                return $this->returnRender($formProduct, $formColor, 'color');
+            }
         }
         return $this->returnRender($formProduct, $formColor, '');
     }
@@ -139,6 +144,26 @@ class RegistrationProductController extends AbstractController
     }
 
     /**
+     * Vérifie l'existence de la couleur en base de données.
+     *
+     * @param string $name Nom de la couleur
+     * @param string $colorCode Code de la couleur
+     *
+     * @return bool
+     */
+    private function checkColorExistence(string $name, string $colorCode)
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Color::class);
+        $result = $repository->findOneBy(
+            array(
+                'name' => $name,
+                'colorCode' => $colorCode
+            )
+        );
+        return $result !== null;
+    }
+
+    /**
      * Renvoie le message approprié en fonction du besoin.
      *
      * @param FormInterface $formProduct Formulaire de création de produits.
@@ -149,7 +174,6 @@ class RegistrationProductController extends AbstractController
      */
     private function returnRender(FormInterface $formProduct, FormInterface $formColor,string $alert): ?Response
     {
-        //$arrayAlerts = array('good', 'reference', 'name', 'image', 'quantity');
         if ($alert === 'good') {
             $render = $this->render(
                 'registration_product/registration_product.html.twig',array(
@@ -192,6 +216,15 @@ class RegistrationProductController extends AbstractController
                     'formProduct' => $formProduct->createView(),
                     'formColor' => $formColor->createView(),
                     'textAlert' => 'L\'image importée doit être une image.',
+                    'classAlert' => 'alert-warning'
+                )
+            );
+        } elseif ($alert === 'color') {
+            $render = $this->render(
+                'registration_product/registration_product.html.twig', array(
+                    'formProduct' => $formProduct->createView(),
+                    'formColor' => $formColor->createView(),
+                    'textAlert' => 'La couleur a déjà été enregistrée.',
                     'classAlert' => 'alert-warning'
                 )
             );
