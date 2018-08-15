@@ -29,13 +29,6 @@ class ShoppingCart
     private $id;
 
     /**
-     * Date de création du panier.
-     *
-     * @ORM\Column(type="datetime")
-     */
-    private $creationDate;
-
-    /**
      * Prix total du panier.
      *
      * @ORM\Column(type="float")
@@ -57,13 +50,6 @@ class ShoppingCart
     private $isConfirmed;
 
     /**
-     * Produits dans le panier.
-     *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Product")
-     */
-    private $products;
-
-    /**
      * Client à qui appartient le panier.
      *
      * @ORM\OneToOne(targetEntity="App\Entity\Individual", mappedBy="shoppingCart", cascade={"persist", "remove"})
@@ -79,6 +65,8 @@ class ShoppingCart
     }
 
     /**
+     * Accesseur de l'ID du Panier.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -87,26 +75,8 @@ class ShoppingCart
     }
 
     /**
-     * @return \DateTimeInterface|null
-     */
-    public function getCreationDate(): ?\DateTimeInterface
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * @param \DateTimeInterface $creationDate
+     * Accesseur du prix total du panier.
      *
-     * @return ShoppingCart
-     */
-    public function setCreationDate(\DateTimeInterface $creationDate): self
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
-    }
-
-    /**
      * @return float|null
      */
     public function getTotalPrice(): ?float
@@ -115,7 +85,9 @@ class ShoppingCart
     }
 
     /**
-     * @param float $totalPrice
+     * Mutateur du prix total du panier.
+     *
+     * @param float $totalPrice Prix total à attribuer au panier.
      *
      * @return ShoppingCart
      */
@@ -127,16 +99,19 @@ class ShoppingCart
     }
 
     /**
+     * Accesseur de la quantité de produits qu'il y a dans le panier.
+     *
      * @return int|null
      */
     public function getProductQuantity(): ?int
     {
-        //return $this->productQuantity;
-        return count($this->products);
+        return $this->productQuantity;
     }
 
     /**
-     * @param int $productQuantity
+     * Mutateur de la quantité de produits qu'il y a dans le panier.
+     *
+     * @param int $productQuantity Quantité de produits à attribuer au panier.
      *
      * @return ShoppingCart
      */
@@ -148,6 +123,8 @@ class ShoppingCart
     }
 
     /**
+     * Accesseur de l'état de confirmation du panier.
+     *
      * @return bool|null
      */
     public function getIsConfirmed(): ?bool
@@ -156,7 +133,9 @@ class ShoppingCart
     }
 
     /**
-     * @param bool $isConfirmed
+     * Mutateur de l'état de confirmation du panier.
+     *
+     * @param bool $isConfirmed Etat de confirmation à attribuer au panier.
      *
      * @return ShoppingCart
      */
@@ -168,42 +147,8 @@ class ShoppingCart
     }
 
     /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
-    /**
-     * @param Product $product
+     * Accesseur du client à qui le panier appartient.
      *
-     * @return ShoppingCart
-     */
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return ShoppingCart
-     */
-    public function removeProduct(Product $product): self
-    {
-        if ($this->products->contains($product)) {
-            $this->products->removeElement($product);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Customer|null
      */
     public function getCustomer(): ?Customer
@@ -212,7 +157,9 @@ class ShoppingCart
     }
 
     /**
-     * @param Customer|null $customer
+     * Mutateur du client à qui le panier appartient.
+     *
+     * @param Customer|null $customer Client à attribuer au panier.
      *
      * @return ShoppingCart
      */

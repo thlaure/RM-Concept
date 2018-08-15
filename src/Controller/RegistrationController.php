@@ -67,7 +67,7 @@ class RegistrationController extends AbstractController
     /**
      * Permet de faire persister des objets en base de données.
      *
-     * @param $object
+     * @param ? $object Objet à faire persister.
      */
     private function persistObject($object): void
     {
@@ -111,7 +111,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     *
+     * Vérifie l'existence de l'adresse mail en base de données.
      *
      * @param string $email Adresse mail dont il faut contrôler l'existence.
      *
@@ -129,7 +129,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * COntrôle le format de l'adresse mail.
+     * Contrôle le format de l'adresse mail.
      *
      * @param string $email Adresse mail à contrôler.
      *
@@ -144,7 +144,7 @@ class RegistrationController extends AbstractController
      * Renvoie le message approprié en fonction du besoin.
      *
      * @param FormInterface $form Formulaire de création de client.
-     * @param string $alert
+     * @param string $alert Alerte définie.
      *
      * @return Response
      */
@@ -154,48 +154,48 @@ class RegistrationController extends AbstractController
             $render = $this->render(
                 'registration/register.html.twig', array(
                     'form' => $form->createView(),
-                    'textAlert' => 'Le format du code postal n\'est pas correct.',
-                    'classAlert' => 'alert-warning'
+                    'text_alert' => 'Le format du code postal n\'est pas correct.',
+                    'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'phoneNumber') {
             $render = $this->render(
                 'registration/register.html.twig', array(
                     'form' => $form->createView(),
-                    'textAlert' => 'Le format du numéro de téléphone n\'est pas correct.',
-                    'classAlert' => 'alert-warning'
+                    'text_alert' => 'Le format du numéro de téléphone n\'est pas correct.',
+                    'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'city') {
             $render = $this->render(
                 'registration/register.html.twig', array(
                     'form' => $form->createView(),
-                    'textAlert' => 'La ville et le code postal ne correspondent pas.',
-                    'classAlert' => 'alert-warning'
+                    'text_alert' => 'La ville et le code postal ne correspondent pas.',
+                    'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'emailFormat') {
             $render = $this->render(
                 'registration/register.html.twig', array(
                     'form' => $form->createView(),
-                    'textAlert' => 'Le format de l\'adresse mail n\'est pas correct.',
-                    'classAlert' => 'alert-warning'
+                    'text_alert' => 'Le format de l\'adresse mail n\'est pas correct.',
+                    'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'emailExists') {
             $render = $this->render(
                 'registration/register.html.twig', array(
                     'form' => $form->createView(),
-                    'textAlert' => 'L\'adresse mail saisie est déjà liée à un compte.',
-                    'classAlert' => 'alert-warning'
+                    'text_alert' => 'L\'adresse mail saisie est déjà liée à un compte.',
+                    'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'success') {
             $render = $this->render(
                 'registration/register.html.twig', array(
                     'form' => $form->createView(),
-                    'textAlert' => 'Vous avez bien été enregistré.',
-                    'classAlert' => 'alert-success'
+                    'text_alert' => 'Vous avez bien été enregistré.',
+                    'class_alert' => 'alert-success'
                 )
             );
         } else {

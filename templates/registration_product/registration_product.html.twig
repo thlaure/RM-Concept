@@ -6,55 +6,55 @@
     {{ parent() }}
     <div class="store p-3">
         <div class="container">
-            {% if textAlert is defined and classAlert is defined %}
-                <div class="alert {{ classAlert }} rounded-0 text-center" role="alert">{{ textAlert }}</div>
+            {% if text_alert is defined and class_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center" role="alert">{{ text_alert }}</div>
             {% endif %}
             <div class="row">
                 <div class="col-lg-6 mt-4">
                     <section class="border p-3 shadow-sm">
                         <h1 class="display-4 text-center mb-2">Enregistrement de produits</h1>
                         <article>
-                            {{ form_start(formProduct) }}
+                            {{ form_start(form_product) }}
                             <div class="form-group">
-                                {{ form_label(formProduct.name, 'Nom du produit') }}
-                                {{ form_widget(formProduct.name, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_product.name, 'Nom du produit') }}
+                                {{ form_widget(form_product.name, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.reference, 'Référence') }}
-                                {{ form_widget(formProduct.reference, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_product.reference, 'Référence') }}
+                                {{ form_widget(form_product.reference, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.description, '') }}
-                                {{ form_widget(formProduct.description, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_product.description, '') }}
+                                {{ form_widget(form_product.description, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.image, '') }}
-                                {{ form_widget(formProduct.image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
+                                {{ form_label(form_product.image, '') }}
+                                {{ form_widget(form_product.image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.color, 'Couleur') }}
-                                {{ form_widget(formProduct.color, {'attr': {'class': 'custom-select rounded-0'}}) }}
+                                {{ form_label(form_product.color, 'Couleur') }}
+                                {{ form_widget(form_product.color, {'attr': {'class': 'custom-select rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.isNew, 'Est-ce une nouveauté ?') }}
-                                {{ form_widget(formProduct.isNew, {'attr': {'class': 'custom-select rounded-0'}}) }}
+                                {{ form_label(form_product.is_new, 'Est-ce une nouveauté ?') }}
+                                {{ form_widget(form_product.is_new, {'attr': {'class': 'custom-select rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.quantity, 'Quantité disponible') }}
-                                {{ form_widget(formProduct.quantity, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_product.quantity, 'Quantité disponible') }}
+                                {{ form_widget(form_product.quantity, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.priceIndividuals, 'Prix pour particuliers') }}
-                                {{ form_widget(formProduct.priceIndividuals, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_product.price_individuals, 'Prix pour particuliers') }}
+                                {{ form_widget(form_product.price_individuals, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formProduct.priceProfessionals, 'Prix pour professionnels') }}
-                                {{ form_widget(formProduct.priceProfessionals, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_product.price_professionals, 'Prix pour professionnels') }}
+                                {{ form_widget(form_product.price_professionals, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
                             </div>
-                            {{ form_end(formProduct) }}
+                            {{ form_end(form_product) }}
                         </article>
                     </section>
                 </div>
@@ -62,19 +62,19 @@
                     <section class="border p-3 shadow-sm">
                         <h1 class="display-4 text-center mb-2">Création de couleurs</h1>
                         <article>
-                            {{ form_start(formColor) }}
+                            {{ form_start(form_color) }}
                             <div class="form-group">
-                                {{ form_label(formColor.name, 'Nom de la couleur') }}
-                                {{ form_widget(formColor.name, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_color.name, 'Nom de la couleur') }}
+                                {{ form_widget(form_color.name, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="form-group">
-                                {{ form_label(formColor.colorCode, 'Code couleur') }}
-                                {{ form_widget(formColor.colorCode, {'attr': {'class': 'form-control rounded-0'}}) }}
+                                {{ form_label(form_color.color_code, 'Code couleur') }}
+                                {{ form_widget(form_color.color_code, {'attr': {'class': 'form-control rounded-0'}}) }}
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary rounded-0 m-auto">Enregistrer</button>
                             </div>
-                            {{ form_end(formColor) }}
+                            {{ form_end(form_color) }}
                         </article>
                     </section>
                 </div>

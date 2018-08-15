@@ -6,8 +6,8 @@
     {{ parent() }}
     <div class="store p-3">
         <div class="container">
-            {% if textAlert is defined and classAlert is defined %}
-                <div class="alert {{ classAlert }} rounded-0 text-center" role="alert">{{ textAlert }}</div>
+            {% if text_alert is defined and class_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center" role="alert">{{ text_alert }}</div>
             {% endif %}
             <section class="border p-3 shadow-sm w-50 m-auto">
                 <h1 class="display-4">Création de compte particulier</h1>

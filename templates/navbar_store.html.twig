@@ -20,7 +20,7 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i> Panier ({{ app.user.shoppingCart.products|length }})</a>
+                            <a class="nav-link" href="{{ path('shopping_cart') }}"><i class="fas fa-shopping-cart"></i> Panier ({{ app.user.shoppingCart.productQuantity }})</a>
                         </li>
                     {% else %}
                         <li class="nav-item">

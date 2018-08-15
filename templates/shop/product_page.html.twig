@@ -1,0 +1,37 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Produit{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store pb-5 mb-5 pt-4">
+        <div class="container">
+            {% if text_alert is defined and class_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center">{{ text_alert }}</div>
+            {% endif %}
+            <section>
+                <div class="row">
+                    <article class="col-md-4">
+                        <img class="w-100" src="{{ asset('images/balls/' ~ product.image) }}">
+                    </article>
+                    <article class="col-md-8">
+                        <h4 class="font-weight-bold">{{ product.name }}</h4>
+                        <p class="lead font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
+                        {{ form_start(form) }}
+                        <div class="form-group">
+                            {{ form_label(form.is_customized, 'Personnaliser ?') }}
+                            {{ form_widget(form.is_customized, {'attr': {'class': 'custom-select rounded-0 w-25'}}) }}
+                            <a href="#" class="btn btn-info rounded-0"><i class="fas fa-paint-brush"></i> Personnaliser</a>
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.quantity, 'Quantité') }}
+                            {{ form_widget(form.quantity, {'attr': {'class': 'form-control rounded-0 w-25'}}) }}
+                        </div>
+                        <button type="submit" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
+                        {{ form_end(form) }}
+                    </article>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

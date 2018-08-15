@@ -86,6 +86,8 @@ class Product
     private $priceProfessionals;
 
     /**
+     * Accesseur de l'ID du produit.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -94,6 +96,8 @@ class Product
     }
 
     /**
+     * Accesseur du nom du produit.
+     *
      * @return null|string
      */
     public function getName(): ?string
@@ -102,7 +106,9 @@ class Product
     }
 
     /**
-     * @param string $name
+     * Mutateur du nom du produit.
+     *
+     * @param string $name Nom à attribuer au produit.
      *
      * @return Product
      */
@@ -114,6 +120,8 @@ class Product
     }
 
     /**
+     * Accesseur de la référence du produit.
+     *
      * @return null|string
      */
     public function getReference(): ?string
@@ -122,7 +130,9 @@ class Product
     }
 
     /**
-     * @param string $reference
+     * Mutateur de la référence du produit.
+     *
+     * @param string $reference Référence à attribuer au produit.
      *
      * @return Product
      */
@@ -134,6 +144,8 @@ class Product
     }
 
     /**
+     * Accesseur de la description du produit.
+     *
      * @return null|string
      */
     public function getDescription(): ?string
@@ -142,7 +154,9 @@ class Product
     }
 
     /**
-     * @param string $description
+     * Mutateur de la description du produit.
+     *
+     * @param string $description description à attribuer au produit.
      *
      * @return Product
      */
@@ -154,6 +168,8 @@ class Product
     }
 
     /**
+     * Accesseur de l'image du produit.
+     *
      * @return null|string
      */
     public function getImage(): ?string
@@ -162,7 +178,9 @@ class Product
     }
 
     /**
-     * @param string $image
+     * Mutateur de l'image du produit.
+     *
+     * @param string $image Image à attribuer au produit.
      *
      * @return Product
      */
@@ -174,6 +192,8 @@ class Product
     }
 
     /**
+     * Accesseur de l'état de nouveauté du produit.
+     *
      * @return bool|null
      */
     public function getIsNew(): ?bool
@@ -182,7 +202,9 @@ class Product
     }
 
     /**
-     * @param bool $isNew
+     * Mutateur de l'état de nouveauté du produit.
+     *
+     * @param bool $isNew Etat de nouveauté à attribuer au produit.
      *
      * @return Product
      */
@@ -194,6 +216,8 @@ class Product
     }
 
     /**
+     * Accesseur de la quantité disponible du produit.
+     *
      * @return int|null
      */
     public function getQuantity(): ?int
@@ -202,6 +226,8 @@ class Product
     }
 
     /**
+     * Mutateur de la quantité disponible du produit.
+     *
      * @param int $quantity
      *
      * @return Product
@@ -214,6 +240,8 @@ class Product
     }
 
     /**
+     * Accesseur du prix du produit pour particuliers.
+     *
      * @return float|null
      */
     public function getPriceIndividuals(): ?float
@@ -222,7 +250,9 @@ class Product
     }
 
     /**
-     * @param float $priceIndividuals
+     * Mutateur du prix du produit pour particuliers.
+     *
+     * @param float $priceIndividuals Prix pour particuliers à attribuer au produit.
      *
      * @return Product
      */
@@ -234,6 +264,8 @@ class Product
     }
 
     /**
+     * Accesseur du prix du produit pour les professionnels.
+     *
      * @return float|null
      */
     public function getPriceProfessionals(): ?float
@@ -242,7 +274,9 @@ class Product
     }
 
     /**
-     * @param float $priceProfessionals
+     * MUutateur du prix du produit pour professionnels.
+     *
+     * @param float $priceProfessionals  Prix pour professionnels à attribuer au produit.
      *
      * @return Product
      */

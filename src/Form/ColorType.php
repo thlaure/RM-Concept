@@ -30,7 +30,7 @@ class ColorType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('colorCode', Type\ColorType::class);
+            ->add('color_code', Type\ColorType::class);
     }
 
     /**

@@ -37,7 +37,7 @@ class ProductType extends AbstractType
             ->add('reference', TextType::class)
             ->add('description', TextareaType::class)
             ->add('image', FileType::class)
-            ->add('isNew', ChoiceType::class,array(
+            ->add('is_new', ChoiceType::class, array(
                 'choices' => array(
                     'Non' => false,
                     'Oui' => true
@@ -46,8 +46,8 @@ class ProductType extends AbstractType
                 'multiple' => false
             ))
             ->add('quantity', NumberType::class)
-            ->add('priceIndividuals', NumberType::class)
-            ->add('priceProfessionals', NumberType::class)
+            ->add('price_individuals', NumberType::class)
+            ->add('price_professionals', NumberType::class)
             ->add('color', EntityType::class, array(
                 'class' => 'App\Entity\Color',
                 'multiple' => false,

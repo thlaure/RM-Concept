@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\ShoppingCart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,7 +33,7 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render(
             'security/login.html.twig', array(
-                'lastUsername' => $lastUsername,
+                'last_username' => $lastUsername,
                 'error' => $error
             )
         );

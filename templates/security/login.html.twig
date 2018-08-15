@@ -11,12 +11,16 @@
                 <article class="border p-3 shadow-sm">
                     <h4 class="text-center">Connectez-vous à votre compte</h4>
                     {% if error %}
-                        <div class="alert alert-warning" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        <div class="alert alert-warning" role="alert">Les identifiants ne correspondent pas.</div>
                     {% endif %}
                     <form action="{{ path('login') }}" method="post">
                         <div class="form-group">
                             <label for="username">Adresse mail</label>
-                            <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com" value="{{ lastUsername }}">
+                            {% if last_username is defined %}
+                                <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com" value="{{ lastUsername }}">
+                            {% else %}
+                                <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com">
+                            {% endif %}
                         </div>
                         <div class="form-group">
                             <label for="password">Mot de passe</label>

@@ -129,6 +129,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur de l'ID du client.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -137,6 +139,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du nom du client.
+     *
      * @return null|string
      */
     public function getName(): ?string
@@ -145,6 +149,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Mutateur du nom du client.
+     *
      * @param string $name
      *
      * @return Customer
@@ -157,6 +163,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du prénom du client.
+     *
      * @return null|string
      */
     public function getFirstName(): ?string
@@ -165,7 +173,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $firstName
+     * Mutateur du prénom du client.
+     *
+     * @param string $firstName Prénom à attribuer au client.
      *
      * @return Customer
      */
@@ -177,6 +187,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur de la référence du client.
+     *
      * @return null|string
      */
     public function getReference(): ?string
@@ -185,7 +197,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $reference
+     * Mutateur de la référence du client.
+     *
+     * @param string $reference Référence à attribuer au client.
      *
      * @return Customer
      */
@@ -197,6 +211,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur de l'adresse mail du client.
+     *
      * @return null|string
      */
     public function getEmail(): ?string
@@ -205,7 +221,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $email
+     * Mutateur de l'adresse mail du client.
+     *
+     * @param string $email Adresse mail à attribuer au client.
      *
      * @return Customer
      */
@@ -217,6 +235,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du numéro de téléphone du client.
+     *
      * @return null|string
      */
     public function getPhoneNumber(): ?string
@@ -225,7 +245,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $phoneNumber
+     * Mutateur du numéro de téléphone du client.
+     *
+     * @param string $phoneNumber Numéro de téléphone à attribuer au client.
      *
      * @return Customer
      */
@@ -237,6 +259,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur de l'adresse postale du client.
+     *
      * @return null|string
      */
     public function getAddress(): ?string
@@ -245,7 +269,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $address
+     * Mutateur de l'adresse postale du client.
+     *
+     * @param string $address Adresse postale à attribuer au client.
      *
      * @return Customer
      */
@@ -257,6 +283,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du complément d'adresse du client.
+     *
      * @return null|string
      */
     public function getAddressComplement(): ?string
@@ -265,7 +293,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param null|string $addressComplement
+     * Mutateur du complément d'adresse du client.
+     *
+     * @param null|string $addressComplement Complément d'adresse à attribuer au client.
      *
      * @return Customer
      */
@@ -277,6 +307,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du code postal du client.
+     *
      * @return null|string
      */
     public function getPostalCode(): ?string
@@ -285,7 +317,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $postalCode
+     * Mutateur du code postal du client.
+     *
+     * @param string $postalCode Code postal à attribuer au client.
      *
      * @return Customer
      */
@@ -297,6 +331,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur de la ville du client.
+     *
      * @return null|string
      */
     public function getCity(): ?string
@@ -305,7 +341,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $city
+     * Mutateur de la ville du client.
+     *
+     * @param string $city Ville à attribuer au client.
      *
      * @return Customer
      */
@@ -317,6 +355,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du mot de passe du client.
+     *
      * @return null|string
      */
     public function getPassword(): ?string
@@ -325,7 +365,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param string $password
+     * Mutateur du mot de passe du client.
+     *
+     * @param string $password Mot de passe à attribuer au client.
      *
      * @return Customer
      */
@@ -337,6 +379,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur du panier du client.
+     *
      * @return ShoppingCart|null
      */
     public function getShoppingCart(): ?ShoppingCart
@@ -345,7 +389,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param ShoppingCart|null $shoppingCart
+     * Mutateur du panier du client.
+     *
+     * @param ShoppingCart|null $shoppingCart Panier à attribuer au client.
      *
      * @return Customer
      */
@@ -357,6 +403,8 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
+     * Accesseur de l'état d'activité du client.
+     *
      * @return bool|null
      */
     public function getIsActive(): ?bool
@@ -365,7 +413,9 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * @param bool $isActive
+     * Mutateur de l'état d'activité du client.
+     *
+     * @param bool $isActive Etat d'activité à attribuer au client.
      *
      * @return Customer
      */
@@ -374,63 +424,6 @@ abstract class Customer implements UserInterface, \Serializable
         $this->isActive = $isActive;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getSalt()
-    {
-        return null;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRoles(): array
-    {
-        return array('ROLE_USER');
-    }
-
-    /**
-     *
-     */
-    public function eraseCredentials()
-    {
-    }
-
-    /**
-     * @see \Serializable::serialize()
-     */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->email,
-            $this->password
-        ));
-    }
-
-    /**
-     * @see \Serializable::unserialize()
-     *
-     * @param $serialized
-     */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->email,
-            $this->password
-        ) = unserialize($serialized, array('allowed_classes' => false));
     }
 
     /**
@@ -446,10 +439,83 @@ abstract class Customer implements UserInterface, \Serializable
     /**
      * Mutateur du mot de passe en clair du client.
      *
-     * @param string $plainPassword
+     * @param string $plainPassword Mot de passe en clair à attribuer au client.
      */
     public function setPlainPassword(string $plainPassword): void
     {
         $this->plainPassword = $plainPassword;
+    }
+
+    /**
+     * Accesseur du nom d'utilisateur du client.
+     * Méthode implémentée par UserInterface.
+     *
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * Accesseur du sel permettant d'encoder le mot de passe.
+     * Méthode implémentée par UserInterface.
+     *
+     * @return null|string
+     */
+    public function getSalt()
+    {
+        return null;
+    }
+
+    /**
+     * Accesseur des rôles (privilèges) du client.
+     * Méthode implémentée par UserInterface.
+     *
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     * Supprime les données sensibles de l'utilisateur.
+     * Méthode implémentée par UserInterface.
+     */
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * Serialize un client.
+     * Méthode implémentée par Serialize.
+     *
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->email,
+            $this->password
+        ));
+    }
+
+    /**
+     * Deserialize un client.
+     * Méthode implémentée par Serialize.
+     *
+     * @see \Serializable::unserialize()
+     *
+     * @param $serialized
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->email,
+            $this->password
+        ) = unserialize($serialized, array('allowed_classes' => false));
     }
 }

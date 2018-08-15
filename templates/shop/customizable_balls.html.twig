@@ -6,6 +6,9 @@
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
+            {% if text_alert is defined %}
+                <div class="alert alert-success rounded-0 text-center">{{ text_alert }}</div>
+            {% endif %}
             <section>
                 <h1 class="display-4 text-center mb-2">Balles personnalisables</h1>
                 {{ dump() }}
@@ -15,7 +18,7 @@
                             <div class="col-md-3">
                                 <div class="card shadow-sm rounded-0 mb-4">
                                     <div class="p-2 w-75 m-auto">
-                                        <a data-toggle="modal" data-target="#modal{{ product.reference }}">
+                                        <a href="{{ path('product-page', { 'reference': product.reference }) }}">
                                             <img class="card-img-top" src="{{ asset('images/balls/' ~ product.image) }}" alt="Image non chargée">
                                         </a>
                                     </div>
@@ -24,55 +27,7 @@
                                         <p class="card-text text-center font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
                                     </div>
                                     <div class="card-footer">
-                                        <button type="button" class="btn btn-primary rounded-0 w-100" data-toggle="modal" data-target="#modal{{ product.reference }}">En savoir plus</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal fade" id="modal{{ product.reference }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content rounded-0">
-                                        <div class="modal-header">
-                                            {% if product.quantity > 10 %}
-                                                <p class="badge badge-success rounded-0">EN STOCK</p>
-                                            {% elseif product.quantity < 10 and product.quantity > 0 %}
-                                                <p class="badge badge-warning rounded-0">{{ product.quantity }} en stock</p>
-                                            {% else %}
-                                                <p class="badge badge-danger rounded-0">Rupture de stock</p>
-                                            {% endif %}
-                                            <h5 class="modal-title m-auto" id="modalLabel">{{ product.name }}</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-lg-5">
-                                                    <img class="w-100" src="{{ asset('images/balls/' ~ product.image) }}" />
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <p class="lead font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
-                                                    <button type="button" class="btn btn-info rounded-0"><i class="fas fa-paint-brush"></i> Personnaliser</button>
-                                                    <div class="row p-3">
-                                                        <form action="{{ path('shopping_cart') }}" method="post">
-                                                            <div class="form-group">
-                                                                <label for="inputQuantity">Quantité</label>
-                                                                <input class="form-control rounded-0" type="number" name="quantity" min="1" id="inputQuantity" />
-                                                            </div>
-                                                            <button type="button" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <br />
-                                            <div>
-                                                <h5>Description :</h5>
-                                                <p class="text-justify">{{ product.description }}</p>
-                                                <p class="lead text-primary font-weight-bold">Vendu par étui de 3 balles.</p>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">Fermer</button>
-                                        </div>
+                                        <a href="{{ path('product-page', { 'reference': product.reference }) }}" class="btn btn-primary rounded-0 w-100">En savoir plus</a>
                                     </div>
                                 </div>
                             </div>
@@ -82,4 +37,8 @@
             </section>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/rmconcept.js') }}"></script>
 {% endblock %}
