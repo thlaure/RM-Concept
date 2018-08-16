@@ -111,8 +111,11 @@ class ShopController extends AbstractController
                     $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
                     $this->persistObject($shoppingCart);
-                    $this->render('shop/customizable_balls.html.twig', array(
-                        'products' => $this->findAllBalls()
+                    $this->render('shop/product_page.html.twig', array(
+                        'text_alert' => 'Le produit a été ajouté au panier.',
+                        'class_alert' => 'alert-success',
+                        'product' => $product,
+                        'form' => $form->createView()
                     ));
                 } else {
                     $this->render('shop/product_page.html.twig', array(

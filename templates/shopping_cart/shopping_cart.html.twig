@@ -6,9 +6,8 @@
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
-            {{ dump() }}
             <section>
-                <h1 class="display-4 text-center mb-2">Mon Panier</h1>
+                <h1 class="display-4 text-center mb-4">Mon Panier</h1>
                 <article>
                     <ul class="list-group rounded-0 shadow-sm">
                         <li class="list-group-item">
@@ -28,7 +27,7 @@
                                     <div class="w-15 text-center">{{ shopping_cart_product.quantity }}</div>
                                     <div class="w-15 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', ' ') }} €</div>
                                     <div class="w-15 text-center">{{ (shopping_cart_product.product.priceIndividuals * shopping_cart_product.quantity)|number_format(2, ',', ' ') }} €</div>
-                                    <div class="w-10 text-center"><button type="button" class="btn btn-info rounded-0"><i class="far fa-trash-alt"></i></button></div>
+                                    <div class="w-10 text-center"><a class="btn btn-info rounded-0" href="{{ path('delete_product', { 'reference': shopping_cart_product.product.reference }) }}"><i class="far fa-trash-alt"></i></a></div>
                                 </div>
                             </li>
                         {% endfor %}
