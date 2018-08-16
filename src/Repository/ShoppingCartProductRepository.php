@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Individual;
 use App\Entity\ShoppingCartProduct;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;

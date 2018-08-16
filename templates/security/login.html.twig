@@ -17,7 +17,7 @@
                         <div class="form-group">
                             <label for="username">Adresse mail</label>
                             {% if last_username is defined %}
-                                <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com" value="{{ lastUsername }}">
+                                <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com" value="{{ last_username }}">
                             {% else %}
                                 <input class="form-control rounded-0" type="text" id="username" aria-describedby="emailHelp" name="_username" placeholder="email@example.com">
                             {% endif %}
@@ -25,6 +25,9 @@
                         <div class="form-group">
                             <label for="password">Mot de passe</label>
                             <input class="form-control rounded-0" type="password" id="password" name="_password">
+                        </div>
+                        <div class="text-center mb-2">
+                            <a href="#">Mot de passe oublié</a>
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary rounded-0">CONNEXION</button>

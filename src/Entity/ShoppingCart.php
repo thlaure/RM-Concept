@@ -57,12 +57,11 @@ class ShoppingCart
     private $customer;
 
     /**
-     * ShoppingCart constructor.
+     * Etat de sauvegarde du panier.
+     *
+     * @ORM\Column(type="boolean")
      */
-    public function __construct()
-    {
-        $this->products = new ArrayCollection();
-    }
+    private $isSaved;
 
     /**
      * Accesseur de l'ID du Panier.
@@ -172,6 +171,30 @@ class ShoppingCart
         if ($newShoppingCart !== $customer->getShoppingCart()) {
             $customer->setShoppingCart($newShoppingCart);
         }
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de l'état de sauvegarde du panier.
+     *
+     * @return bool|null
+     */
+    public function getIsSaved(): ?bool
+    {
+        return $this->isSaved;
+    }
+
+    /**
+     * Mutateur de l'état de sauvegarde du panier.
+     *
+     * @param bool $isSaved Etat de sauvegarde à attribuer au panier.
+     *
+     * @return ShoppingCart
+     */
+    public function setIsSaved(bool $isSaved): self
+    {
+        $this->isSaved = $isSaved;
 
         return $this;
     }

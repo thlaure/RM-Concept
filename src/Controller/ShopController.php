@@ -106,12 +106,12 @@ class ShopController extends AbstractController
                     $shoppingCartProduct->setQuantity($shoppingCartProduct->getQuantity());
                     $shoppingCartProduct->setShoppingCart($shoppingCart);
                     $shoppingCartProduct->setProduct($product);
+                    $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity());
                     $this->persistObject($shoppingCartProduct);
                     $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
                     $this->persistObject($shoppingCart);
                     $this->render('shop/customizable_balls.html.twig', array(
-                        'text_alert' => 'Le produit a bien été ajouté au panier.',
                         'products' => $this->findAllBalls()
                     ));
                 } else {
@@ -166,6 +166,22 @@ class ShopController extends AbstractController
     }
 
     /**
+     * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
+     *
+     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
+     *
+     * @return Ball[]|ShoppingCartProduct[]|object[]
+     */
+    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
+        $result = $repository->findBy(array(
+            'shoppingCart' => $shoppingCart
+        ));
+        return $result;
+    }
+
+    /**
      * Instancie la classe ShoppingCart.
      *
      * @param Customer $customer Client à qui appartient le panier.
@@ -179,6 +195,7 @@ class ShopController extends AbstractController
         $shoppingCart->setProductQuantity(0);
         $shoppingCart->setIsConfirmed(false);
         $shoppingCart->setTotalPrice(0);
+        $shoppingCart->setIsSaved(false);
         return $shoppingCart;
     }
 
@@ -192,21 +209,5 @@ class ShopController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($object);
         $entityManager->flush();
-    }
-
-    /**
-     * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
-     *
-     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
-     *
-     * @return Ball[]|ShoppingCartProduct[]|object[]
-     */
-    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findAll(array(
-            'shoppingCart' => $shoppingCart
-        ));
-        return $result;
     }
 }

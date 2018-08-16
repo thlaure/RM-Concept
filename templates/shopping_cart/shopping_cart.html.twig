@@ -6,6 +6,7 @@
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
+            {{ dump() }}
             <section>
                 <h1 class="display-4 text-center mb-2">Mon Panier</h1>
                 <article>
@@ -13,25 +14,28 @@
                         <li class="list-group-item">
                             <div class="row">
                                 <div class="w-25 text-center">Image</div>
-                                <div class="w-25 text-center">Nom</div>
-                                <div class="w-25 text-center">Quantité</div>
-                                <div class="w-25 text-center">Prix</div>
+                                <div class="w-20 text-center">Nom</div>
+                                <div class="w-15 text-center">Quantité</div>
+                                <div class="w-15 text-center">Prix unitaire</div>
+                                <div class="w-15 text-center">Prix</div>
                             </div>
                         </li>
                         {% for shopping_cart_product in shopping_carts_products %}
                             <li class="list-group-item">
                                 <div class="row">
                                     <div class="w-25 text-center"><img class="w-25" src="{{ asset('images/balls/') ~ shopping_cart_product.product.image }}" alt="Image non chargée."/></div>
-                                    <div class="w-25 text-center">{{ shopping_cart_product.product.name }}</div>
-                                    <div class="w-25 text-center">{{ shopping_cart_product.quantity }}</div>
-                                    <div class="w-25 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', '.') }} €</div>
+                                    <div class="w-20 text-center">{{ shopping_cart_product.product.name }}</div>
+                                    <div class="w-15 text-center">{{ shopping_cart_product.quantity }}</div>
+                                    <div class="w-15 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', ' ') }} €</div>
+                                    <div class="w-15 text-center">{{ (shopping_cart_product.product.priceIndividuals * shopping_cart_product.quantity)|number_format(2, ',', ' ') }} €</div>
+                                    <div class="w-10 text-center"><button type="button" class="btn btn-info rounded-0"><i class="far fa-trash-alt"></i></button></div>
                                 </div>
                             </li>
                         {% endfor %}
                     </ul>
                 </article>
                 <article>
-                    <h4 class="float-right m-3">Prix total : {{ total_price|number_format(2, ',', '.') }} €</h4>
+                    <h4 class="float-right m-3">Prix total : {{ total_price|number_format(2, ',', ' ') }} €</h4>
                 </article>
             </section>
         </div>

@@ -6,9 +6,6 @@
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
-            {% if text_alert is defined %}
-                <div class="alert alert-success rounded-0 text-center">{{ text_alert }}</div>
-            {% endif %}
             <section>
                 <h1 class="display-4 text-center mb-2">Balles personnalisables</h1>
                 {{ dump() }}
@@ -37,8 +34,4 @@
             </section>
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    <script src="{{ asset('js/rmconcept.js') }}"></script>
 {% endblock %}

@@ -57,6 +57,13 @@ class ShoppingCartProduct
     private $isCustomized;
 
     /**
+     * Prix total par rapport à la quantité voulue.
+     *
+     * @ORM\Column(type="float")
+     */
+    private $price;
+
+    /**
      * Accesseur de l'ID de la classe intermédiaire.
      *
      * @return int|null
@@ -158,6 +165,30 @@ class ShoppingCartProduct
     public function setIsCustomized(?bool $isCustomized): self
     {
         $this->isCustomized = $isCustomized;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur du prix par rapport à la quantité voulue.
+     *
+     * @return float|null
+     */
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    /**
+     * Mutateur du prix par rapport à la quantité voulue.
+     *
+     * @param float $price Prix à attribuer.
+     *
+     * @return ShoppingCartProduct
+     */
+    public function setPrice(float $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

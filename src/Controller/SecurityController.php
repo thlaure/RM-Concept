@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\ShoppingCart;
+use App\Entity\ShoppingCartProduct;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
@@ -46,10 +49,85 @@ class SecurityController extends AbstractController
      *
      * @return Response
      */
-    public function logout()
+    public function logout(): ?Response
     {
         return $this->render(
             'security/logout.html.twig'
         );
+    }
+
+    /**
+     * Supprime les produits du panier et réinitialise ce dernier avant de déconnecter le client.
+     *
+     * @Route("/prelogout", name="pre_logout")
+     *
+     * @param Security $security
+     *
+     * @return Response
+     */
+    public function preLogout(Security $security): ?Response
+    {
+        $customer = $security->getUser();
+        $shoppingCart = $customer->getShoppingCart();
+        $this->deleteAllShoppingCartProduct($shoppingCart);
+        $this->resetShoppingCart($shoppingCart);
+        return $this->render('security/logout.html.twig', array(
+            'error' => ''
+        ));
+    }
+
+    /**
+     * Supprime toutes les données présentes dans le panier passé en paramètre.
+     *
+     * @param ShoppingCart $shoppingCart Panier dont on veut supprimer les données.
+     */
+    private function deleteAllShoppingCartProduct(ShoppingCart $shoppingCart): void
+    {
+        $shoppingCartsProducts = $this->findAllShoppingCartProduct($shoppingCart);
+        foreach ($shoppingCartsProducts as $shoppingCartProduct) {
+            $this->deleteObject($shoppingCartProduct);
+        }
+    }
+
+    /**
+     * Supprime une entité.
+     *
+     * @param ? $object Entité que l'on souhaite supprimer.
+     */
+    private function deleteObject($object): void
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($object);
+        $entityManager->flush();
+    }
+
+    /**
+     * Réinitialise le panier passé en paramètre.
+     *
+     * @param ShoppingCart $shoppingCart Panier à réinitialiser.
+     */
+    private function resetShoppingCart(ShoppingCart $shoppingCart)
+    {
+        $shoppingCart->setTotalPrice(0);
+        $shoppingCart->setProductQuantity(0);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($shoppingCart);
+        $entityManager->flush();
+    }
+
+    /**
+     * Renvoie un tableau avec toutes les entités ShoppingCartProduct liées au panier passé en paramètre.
+     *
+     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer les enregistrements liés.
+     *
+     * @return ShoppingCartProduct[]|object[]
+     */
+    private function findAllShoppingCartProduct(ShoppingCart $shoppingCart): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
+        $result = $repository->findBy(array(
+            'shoppingCart' => $shoppingCart
+        ));
+        return $result;
     }
 }

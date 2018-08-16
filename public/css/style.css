@@ -29,3 +29,15 @@
     background-color: #f1f1f1;
     box-shadow: inset 0 2px 5px 0 rgba(0,0,0,.125);
 }
+
+.w-10 {
+    width: 10%;
+}
+
+.w-15 {
+    width: 15%;
+}
+
+.w-20 {
+    width: 20%;
+}

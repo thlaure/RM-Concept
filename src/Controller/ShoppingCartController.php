@@ -34,7 +34,7 @@ class ShoppingCartController extends AbstractController
     {
         $customer = $security->getUser();
         $shoppingCart = $customer->getShoppingCart();
-        $shoppingCartsProducts = $this->findAllShoppingCartProduct($shoppingCart);
+        $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
         $totalPrice = $this->calculateTotalPrice($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
             'shopping_carts_products' => $shoppingCartsProducts,
@@ -49,10 +49,10 @@ class ShoppingCartController extends AbstractController
      *
      * @return Ball[]|ShoppingCartProduct[]|object[]
      */
-    private function findAllShoppingCartProduct(ShoppingCart $shoppingCart): array
+    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findAll(array(
+        $result = $repository->findBy(array(
             'shoppingCart' => $shoppingCart
         ));
         return $result;
@@ -61,17 +61,22 @@ class ShoppingCartController extends AbstractController
     /**
      * Renvoie le prix total du panier.
      *
-     * @param ShoppingCart $shoppingCart
+     * @param ShoppingCart $shoppingCart Panier dont il faut calculer le montant total.
      *
      * @return float|int|null
      */
     private function calculateTotalPrice(ShoppingCart $shoppingCart): ?float
     {
         $totalPrice = 0;
-        $shoppingCartsProducts = $this->findAllShoppingCartProduct($shoppingCart);
+        $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
         foreach ($shoppingCartsProducts as $shoppingCartProduct) {
-            $totalPrice += $shoppingCartProduct->getProduct()->getPriceIndividuals();
+            $totalPrice += $shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity();
         }
         return $totalPrice;
+    }
+
+    private function deleteShoppingCartProduct()
+    {
+        
     }
 }
