@@ -1,0 +1,48 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Choix du transporteur{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store pb-5 mb-5 pt-4">
+        <div class="container">
+            {% if text_alert is defined and class_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center" role="alert">{{ text_alert }}</div>
+            {% endif %}
+            <section>
+                <h1 class="display-4 text-center">Livraison</h1>
+                <article class="w-50 mx-auto">
+                    {{ form_start(form) }}
+                    <div class="form-group">
+                        {% for haulier in form.haulier %}
+                            <div class="custom-control custom-radio">
+                                {{ form_widget(haulier, {'attr': {'class': 'custom-control-input'}}) }}
+                                {{ form_label(haulier, '', {'label_attr': {'class': 'custom-control-label'}}) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.delivery_address, 'Adresse de livraison') }}
+                        {{ form_widget(form.delivery_address, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.delivery_complement_address, 'Complément de l\'adresse de livraison (facultatif)') }}
+                        {{ form_widget(form.delivery_complement_address, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.delivery_postal_code, 'Code postal de la livraison') }}
+                        {{ form_widget(form.delivery_postal_code, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.delivery_city, 'Ville de la livraison') }}
+                        {{ form_widget(form.delivery_city, {'attr': {'class': 'form-control rounded-0'}}) }}
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary rounded-0" type="submit">Valider</button>
+                    </div>
+                    {{ form_end(form) }}
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}
