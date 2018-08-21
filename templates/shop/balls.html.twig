@@ -7,7 +7,11 @@
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
             <section>
-                <h1 class="display-4 text-center mb-4">Balles personnalisables</h1>
+                {% if individual is defined %}
+                    <h1 class="display-4 text-center mb-4">Balles personnalisables</h1>
+                {% else %}
+                    <h1 class="display-4 text-center mb-4">Espace entreprise</h1>
+                {% endif %}
                 <article>
                     <div class="card-group">
                         {% for product in products %}
@@ -20,7 +24,11 @@
                                     </div>
                                     <div class="card-body p-0">
                                         <h5 class="card-title text-center">{{ product.name }}</h5>
-                                        <p class="card-text text-center font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
+                                        {% if individual is defined %}
+                                            <p class="card-text text-center font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
+                                        {% else %}
+                                            <p class="card-text text-center font-weight-bold">{{ product.priceProfessionals|number_format(2, ',', '.') }} €</p>
+                                        {% endif %}
                                     </div>
                                     <div class="card-footer">
                                         <a href="{{ path('product-page', { 'reference': product.reference }) }}" class="btn btn-primary rounded-0 w-100">En savoir plus</a>

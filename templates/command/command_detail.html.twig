@@ -1,0 +1,15 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Détail de la commande{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store">
+        <div class="container">
+            <section>
+                <h1 class="display-4">Détail de la commande</h1>
+                <p class="lead">Réf commande : {{ command.reference }}</p>
+            </section>
+        </div>
+    </div>
+{% endblock %}

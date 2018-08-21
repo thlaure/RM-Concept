@@ -9,6 +9,7 @@ use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
 use App\Form\ShoppingCartProductType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -44,15 +45,17 @@ class ShopController extends AbstractController
             } else {
                 $shoppingCart = $customer->getShoppingCart();
             }
-            return $this->render('shop/customizable_balls.html.twig', [
+            return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
                 'customer' => $customer,
-                'shoppingCart' => $shoppingCart
+                'shoppingCart' => $shoppingCart,
+                'individual' => true
             ]);
         }
-        return $this->render('shop/customizable_balls.html.twig', [
+        return $this->render('shop/balls.html.twig', [
             'products' => $this->findAllBalls(),
-            'customer' => $customer
+            'customer' => $customer,
+            'individual' => true
         ]);
     }
 
@@ -70,14 +73,15 @@ class ShopController extends AbstractController
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
             $shoppingCart = $customer->getShoppingCart();
-            return $this->render('shop/company-area.html.twig', [
+            return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
                 'customer' => $customer,
                 'shoppingCart' => $shoppingCart
             ]);
         }
-        return $this->render('shop/company-area.html.twig', [
-            'products' => $this->findAllBalls()
+        return $this->render('shop/balls.html.twig', [
+            'products' => $this->findAllBalls(),
+            'customer' => $customer
         ]);
     }
 
@@ -111,33 +115,15 @@ class ShopController extends AbstractController
                     $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
                     $this->persistObject($shoppingCart);
-                    $this->render('shop/product_page.html.twig', array(
-                        'text_alert' => 'Le produit a été ajouté au panier.',
-                        'class_alert' => 'alert-success',
-                        'product' => $product,
-                        'form' => $form->createView()
-                    ));
+                    return $this->returnRender($form, $product, 'success');
                 } else {
-                    $this->render('shop/product_page.html.twig', array(
-                        'text_alert' => 'La quantité doit être supérieure à 0.',
-                        'class_alert' => 'alert-warning',
-                        'product' => $product,
-                        'form' => $form->createView()
-                    ));
+                    return $this->returnRender($form, $product, 'quantity');
                 }
             } else {
-                return $this->render(
-                    'security/login.html.twig', array(
-                    'error' => ''
-                ));
+                return $this->returnRender($form, $product, 'login');
             }
         }
-        return $this->render(
-            'shop/product_page.html.twig', array(
-                'product' => $product,
-                'form' => $form->createView()
-            )
-        );
+        return $this->returnRender($form, $product, '');
     }
 
     /**
@@ -212,5 +198,45 @@ class ShopController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($object);
         $entityManager->flush();
+    }
+
+    /**
+     * Renvoie le message approprié en fonction du besoin.
+     *
+     * @param FormInterface $form Formulair ed'ajout au panier.
+     * @param Product $product Produit à ajouter au panier.
+     * @param string $alert Alerte définie.
+     *
+     * @return Response
+     */
+    private function returnRender(FormInterface $form, Product $product, string $alert): ?Response
+    {
+        if ($alert === 'success') {
+            $render = $this->render('shop/product_page.html.twig', array(
+                'text_alert' => 'Le produit a été ajouté au panier.',
+                'class_alert' => 'alert-success',
+                'product' => $product,
+                'form' => $form->createView()
+            ));
+        } elseif ($alert === 'quantity') {
+            $render = $this->render('shop/product_page.html.twig', array(
+                'text_alert' => 'La quantité doit être supérieure à 0.',
+                'class_alert' => 'alert-warning',
+                'product' => $product,
+                'form' => $form->createView()
+            ));
+        } elseif ($alert === 'login') {
+            $render = $this->render(
+                'security/login.html.twig', array(
+                'error' => ''
+            ));
+        } else {
+            $render = $this->render(
+                'shop/product_page.html.twig', array(
+                'product' => $product,
+                'form' => $form->createView()
+            ));
+        }
+        return $render;
     }
 }

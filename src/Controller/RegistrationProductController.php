@@ -55,8 +55,7 @@ class RegistrationProductController extends AbstractController
                 return $this->returnRender($formProduct, $formColor, 'quantity');
             } elseif ($referenceExists) {
                 return $this->returnRender($formProduct, $formColor, 'reference');
-            }
-            else {
+            } else {
                 return $this->returnRender($formProduct, $formColor, 'image');
             }
         } elseif ($formColor->isSubmitted() && $formColor->isValid()) {
@@ -76,7 +75,7 @@ class RegistrationProductController extends AbstractController
     /**
      * Permet de faire persister des objets en base de données.
      *
-     * @param ? $object Objet à faire persister.
+     * @param ? $object Objet à persister.
      */
     private function persistObject($object): void
     {

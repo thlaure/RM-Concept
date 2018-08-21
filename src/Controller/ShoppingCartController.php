@@ -48,7 +48,7 @@ class ShoppingCartController extends AbstractController
      *
      * @Route("/shopping-cart/delete-product/{reference}", name="delete_product")
      *
-     * @param string $reference R√©f√©rence du produiit √† supprimer du panier.
+     * @param string $reference RÈfÈrence du produit ‡ supprimer du panier.
      * @param Security $security
      *
      * @return null|Response
@@ -71,9 +71,9 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Renvoie le produit dont la r√©f√©rence est pass√©e en param√®tre.
+     * Renvoie le produit dont la rÈfÈrence est passÈe en paramÍtre.
      *
-     * @param string $reference R√©f√©rence du produit que l'on souhaite r√©cup√©rer.
+     * @param string $reference RÈfÈrence du produit que l'on souhaite rÈcupÈrer.
      *
      * @return Product|null|object
      */
@@ -87,9 +87,9 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Renvoie la ligne du panier contenant le produit pass√© en param√®tre.
+     * Renvoie la ligne du panier contenant le produit passÈe en param√®tre.
      *
-     * @param Product $product Produit qu'il faut r√©cup√©rer dans le panier.
+     * @param Product $product Produit qu'il faut rÈcupÈrer dans le panier.
      *
      * @return ShoppingCartProduct|null|object
      */
@@ -103,9 +103,9 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Renvoie un tableau avec tous les produits pr√©sents dans le panier pass√© en param√®tre.
+     * Renvoie un tableau avec tous les produits prÈsents dans le panier passÈ en paramËtre.
      *
-     * @param ShoppingCart $shoppingCart Panier dont on veut r√©cup√©rer le contenu.
+     * @param ShoppingCart $shoppingCart Panier dont on veut rÈcupÈrer le contenu.
      *
      * @return Ball[]|ShoppingCartProduct[]|object[]
      */
@@ -136,7 +136,7 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Permet de faire persister des objets en base de donn√©es.
+     * Permet de faire persister des objets en base de donnÈes.
      *
      * @param $object
      */
@@ -148,9 +148,9 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Supprime l'entit√© pass√©e en param√®tre.
+     * Supprime l'entitÈ passÈe en paramËtre.
      *
-     * @param ? $object Objet √† supprimer.
+     * @param ? $object Objet ‡ supprimer.
      */
     private function deleteObject($object): void
     {

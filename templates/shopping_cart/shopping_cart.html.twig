@@ -33,8 +33,9 @@
                         {% endfor %}
                     </ul>
                 </article>
-                <article>
-                    <h4 class="float-right m-3">Prix total : {{ total_price|number_format(2, ',', ' ') }} €</h4>
+                <article class="float-right m-3">
+                    <h4>Prix total : {{ total_price|number_format(2, ',', ' ') }} €</h4>
+                    <a class="btn btn-info rounded-0 float-right" href="{{ path('choice_haulier') }}">Valider le panier</a>
                 </article>
             </section>
         </div>
