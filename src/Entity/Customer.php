@@ -11,7 +11,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Class Customer.
  *
- * @ORM\MappedSuperclass()
+ * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"client" = "Customer", "particulier" = "Individual"})
  *
  * @category Symfony4
  * @package  App\Entity
@@ -101,18 +104,25 @@ abstract class Customer implements UserInterface, \Serializable
     private $password;
 
     /**
-     * Panier du client.
-     *
-     * @ORM\OneToOne(targetEntity="App\Entity\ShoppingCart", inversedBy="customer", cascade={"persist", "remove"})
-     */
-    private $shoppingCart;
-
-    /**
      * Etat de connexion du client.
      *
      * @ORM\Column(type="boolean")
      */
     private $isActive;
+
+    /**
+     * Liste des commandes du particulier.
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Command", mappedBy="customer")
+     */
+    private $commands;
+
+    /**
+     * Panier du client.
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\ShoppingCart", mappedBy="customer")
+     */
+    private $shoppingCarts;
 
     /**
      * Mot de passe en clair du client.
@@ -128,6 +138,8 @@ abstract class Customer implements UserInterface, \Serializable
     public function __construct()
     {
         $this->isActive = true;
+        $this->commands = new ArrayCollection();
+        $this->shoppingCarts = new ArrayCollection();
     }
 
     /**
@@ -381,30 +393,6 @@ abstract class Customer implements UserInterface, \Serializable
     }
 
     /**
-     * Accesseur du panier du client.
-     *
-     * @return ShoppingCart|null
-     */
-    public function getShoppingCart(): ?ShoppingCart
-    {
-        return $this->shoppingCart;
-    }
-
-    /**
-     * Mutateur du panier du client.
-     *
-     * @param ShoppingCart|null $shoppingCart Panier à attribuer au client.
-     *
-     * @return Customer
-     */
-    public function setShoppingCart(?ShoppingCart $shoppingCart): self
-    {
-        $this->shoppingCart = $shoppingCart;
-
-        return $this;
-    }
-
-    /**
      * Accesseur de l'état d'activité du client.
      *
      * @return bool|null
@@ -424,6 +412,100 @@ abstract class Customer implements UserInterface, \Serializable
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de la liste des commandes du particulier.
+     *
+     * @return Collection|Command[]
+     */
+    public function getCommands(): Collection
+    {
+        return $this->commands;
+    }
+
+    /**
+     * Ajoute une commande à la liste des commandes du particulier.
+     *
+     * @param Command $command Commande à ajouter.
+     *
+     * @return self
+     */
+    public function addCommand(Command $command): self
+    {
+        if (!$this->commands->contains($command)) {
+            $this->commands[] = $command;
+            $command->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Supprime une commande à la liste des commandes du particulier.
+     *
+     * @param Command $command Commande à supprimer.
+     *
+     * @return self
+     */
+    public function removeCommand(Command $command): self
+    {
+        if ($this->commands->contains($command)) {
+            $this->commands->removeElement($command);
+            // set the owning side to null (unless already changed)
+            if ($command->getCustomer() === $this) {
+                $command->setCustomer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Accesseur du panier du client.
+     *
+     * @return Collection|ShoppingCart[]
+     */
+    public function getShoppingCarts(): Collection
+    {
+        return $this->shoppingCarts;
+    }
+
+    /**
+     * Ajoute un panier à la liste des paniers du client.
+     *
+     * @param ShoppingCart $shoppingCart Panier à ajouter.
+     *
+     * @return Individual
+     */
+    public function addShoppingCart(ShoppingCart $shoppingCart): self
+    {
+        if (!$this->shoppingCarts->contains($shoppingCart)) {
+            $this->shoppingCarts[] = $shoppingCart;
+            $shoppingCart->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Supprime un panier de la liste des paniers du client.
+     *
+     * @param ShoppingCart $shoppingCart Panier à supprimer.
+     *
+     * @return Individual
+     */
+    public function removeShoppingCart(ShoppingCart $shoppingCart): self
+    {
+        if ($this->shoppingCarts->contains($shoppingCart)) {
+            $this->shoppingCarts->removeElement($shoppingCart);
+            // set the owning side to null (unless already changed)
+            if ($shoppingCart->getCustomer() === $this) {
+                $shoppingCart->setCustomer(null);
+            }
+        }
 
         return $this;
     }

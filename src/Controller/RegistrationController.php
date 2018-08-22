@@ -41,7 +41,7 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(CustomerType::class, $individual);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (strlen($individual->getPostalCode()) === 5 && strlen($individual->getPhoneNumber()) === 10 && $this->checkEmail($individual->getEmail()) && !$this->checkEmailExistence($individual->getEmail()) && $this->checkExistenceCity($individual->getCity(), $individual->getPostalCode())) {
+            if (strlen($individual->getPostalCode()) === 5 && strlen($individual->getPhoneNumber()) === 10 && $this->checkEmail($individual->getEmail()) && !$this->checkEmailExistence($individual->getEmail()) && $this->checkCityExistence($individual->getCity(), $individual->getPostalCode())) {
                 $password = $passwordEncoder->encodePassword($individual, $individual->getPlainPassword());
                 $individual->setPassword($password);
                 $individual->setName(strtoupper($individual->getName()));
@@ -58,7 +58,7 @@ class RegistrationController extends AbstractController
                 return $this->returnRender($form, 'phoneNumber');
             } elseif ($this->checkEmailExistence($individual->getEmail())) {
                 return $this->returnRender($form, 'emailExists');
-            } elseif (!$this->checkExistenceCity($individual->getCity(), $individual->getPostalCode())) {
+            } elseif (!$this->checkCityExistence($individual->getCity(), $individual->getPostalCode())) {
                 return $this->returnRender($form, 'city');
             } else {
                 return $this->returnRender($form, 'emailFormat');
@@ -68,7 +68,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * Permet de faire persister des objets en base de données.
+     * Permet de faire persister une entité en base de données.
      *
      * @param ? $object Objet à persister.
      */
@@ -151,7 +151,7 @@ class RegistrationController extends AbstractController
      *
      * @return bool
      */
-    private function checkExistenceCity(string $name, string $postalCode)
+    private function checkCityExistence(string $name, string $postalCode)
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(City::class);
         $result = $repository->findOneBy(array(

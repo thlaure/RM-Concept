@@ -1,0 +1,34 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Paiement{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store pb-5 mb-5 pt-4">
+        <div class="container">
+            {% if text_alert is defined and class_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center" role="alert">{{ text_alert }}</div>
+            {% endif %}
+            <section>
+                <h1 class="display-4 text-center mb-4">Choix du moyen de paiement</h1>
+                <article class="w-50 mx-auto">
+                    <p class="lead">Total à payer : {{ total_price }} €</p>
+                </article>
+                <article class="w-50 mx-auto">
+                    {{ form_start(form) }}
+                    {% for payment_method in form.payment_method %}
+                        <div class="custom-control custom-radio">
+                            {{ form_widget(payment_method, {'attr': {'class': 'custom-control-input'}}) }}
+                            {{ form_label(payment_method, '', {'label_attr': {'class': 'custom-control-label'}}) }}
+                        </div>
+                    {% endfor %}
+                    <div class="text-center">
+                        <a class="btn btn-secondary rounded-0" href="{{ path('cancel') }}">Annuler la commande</a>
+                        <button class="btn btn-primary rounded-0" type="submit">Payer</button>
+                    </div>
+                    {{ form_end(form) }}
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}

@@ -10,7 +10,7 @@
                 <div class="alert {{ class_alert }} rounded-0 text-center" role="alert">{{ text_alert }}</div>
             {% endif %}
             <section>
-                <h1 class="display-4 text-center">Livraison</h1>
+                <h1 class="display-4 text-center mb-4">Livraison</h1>
                 <article class="w-50 mx-auto">
                     {{ form_start(form) }}
                     <div class="form-group">
@@ -45,4 +45,9 @@
             </section>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/rmconcept.js') }}"></script>
 {% endblock %}

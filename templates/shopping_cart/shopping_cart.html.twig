@@ -19,7 +19,7 @@
                                 <div class="w-15 text-center">Prix</div>
                             </div>
                         </li>
-                        {% for shopping_cart_product in shopping_carts_products %}
+                        {% for shopping_cart_product in shopping_cart_products %}
                             <li class="list-group-item">
                                 <div class="row">
                                     <div class="w-25 text-center"><img class="w-25" src="{{ asset('images/balls/') ~ shopping_cart_product.product.image }}" alt="Image non chargée."/></div>

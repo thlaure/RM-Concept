@@ -52,7 +52,7 @@ class ShoppingCart
     /**
      * Client à qui appartient le panier.
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\Individual", mappedBy="shoppingCart", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="shoppingCarts")
      */
     private $customer;
 
@@ -62,6 +62,13 @@ class ShoppingCart
      * @ORM\Column(type="boolean")
      */
     private $isSaved;
+
+    /**
+     * Commande liée au panier.
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\Command", cascade={"persist", "remove"})
+     */
+    private $command;
 
     /**
      * Accesseur de l'ID du Panier.
@@ -146,36 +153,6 @@ class ShoppingCart
     }
 
     /**
-     * Accesseur du client à qui le panier appartient.
-     *
-     * @return Customer|null
-     */
-    public function getCustomer(): ?Customer
-    {
-        return $this->customer;
-    }
-
-    /**
-     * Mutateur du client à qui le panier appartient.
-     *
-     * @param Customer|null $customer Client à attribuer au panier.
-     *
-     * @return ShoppingCart
-     */
-    public function setCustomer(?Customer $customer): self
-    {
-        $this->customer = $customer;
-
-        // set (or unset) the owning side of the relation if necessary
-        $newShoppingCart = $customer === null ? null : $this;
-        if ($newShoppingCart !== $customer->getShoppingCart()) {
-            $customer->setShoppingCart($newShoppingCart);
-        }
-
-        return $this;
-    }
-
-    /**
      * Accesseur de l'état de sauvegarde du panier.
      *
      * @return bool|null
@@ -195,6 +172,54 @@ class ShoppingCart
     public function setIsSaved(bool $isSaved): self
     {
         $this->isSaved = $isSaved;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de la commande liée au panier.
+     *
+     * @return Command|null
+     */
+    public function getCommand(): ?Command
+    {
+        return $this->command;
+    }
+
+    /**
+     * Mutateur de la commande liée au panier.
+     *
+     * @param Command|null $command Commande à attribuer au panier.
+     *
+     * @return ShoppingCart
+     */
+    public function setCommand(?Command $command): self
+    {
+        $this->command = $command;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur du client lié au panier.
+     *
+     * @return Customer|null
+     */
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    /**
+     * Mutateur du client lié au panier.
+     *
+     * @param Customer|null $customer Client à attribuer au panier.
+     *
+     * @return ShoppingCart
+     */
+    public function setCustomer(?Customer $customer): self
+    {
+        $this->customer = $customer;
 
         return $this;
     }

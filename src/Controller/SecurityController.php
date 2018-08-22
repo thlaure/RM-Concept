@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Customer;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -57,7 +58,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * Supprime les produits du panier et réinitialise ce dernier avant de déconnecter le client.
+     * Supprime les produits du panier non confirmé et réinitialise ce dernier avant de déconnecter le client.
      *
      * @Route("/prelogout", name="pre_logout")
      *
@@ -68,12 +69,31 @@ class SecurityController extends AbstractController
     public function preLogout(Security $security): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $customer->getShoppingCart();
-        $this->deleteAllShoppingCartProduct($shoppingCart);
-        $this->resetShoppingCart($shoppingCart);
+        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
+        if (!$shoppingCart->getIsConfirmed()) {
+            $this->removeAllShoppingCartProducts($shoppingCart);
+            $this->resetShoppingCart($shoppingCart);
+        }
         return $this->render('security/logout.html.twig', array(
             'error' => ''
         ));
+    }
+
+    /**
+     * Renvoie le panier non confirmé du client passé en paramètre.
+     *
+     * @param Customer $customer Client lié au panier.
+     *
+     * @return ShoppingCart|null
+     */
+    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
+        $result = $repository->findOneBy(array(
+            'customer' => $customer,
+            'isConfirmed' => false
+        ));
+        return $result;
     }
 
     /**
@@ -81,11 +101,11 @@ class SecurityController extends AbstractController
      *
      * @param ShoppingCart $shoppingCart Panier dont on veut supprimer les données.
      */
-    private function deleteAllShoppingCartProduct(ShoppingCart $shoppingCart): void
+    private function removeAllShoppingCartProducts(ShoppingCart $shoppingCart): void
     {
-        $shoppingCartsProducts = $this->findAllShoppingCartProduct($shoppingCart);
+        $shoppingCartsProducts = $this->findAllShoppingCartProducts($shoppingCart);
         foreach ($shoppingCartsProducts as $shoppingCartProduct) {
-            $this->deleteObject($shoppingCartProduct);
+            $this->removeObject($shoppingCartProduct);
         }
     }
 
@@ -94,7 +114,7 @@ class SecurityController extends AbstractController
      *
      * @param ? $object Entité que l'on souhaite supprimer.
      */
-    private function deleteObject($object): void
+    private function removeObject($object): void
     {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($object);
@@ -122,7 +142,7 @@ class SecurityController extends AbstractController
      *
      * @return ShoppingCartProduct[]|object[]
      */
-    private function findAllShoppingCartProduct(ShoppingCart $shoppingCart): array
+    private function findAllShoppingCartProducts(ShoppingCart $shoppingCart): array
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
         $result = $repository->findBy(array(

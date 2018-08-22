@@ -39,16 +39,23 @@ class ShopController extends AbstractController
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            if ($customer->getShoppingCart() === null) {
+            $shoppingCartNotConfirmed = null;
+            $shoppingCarts = $customer->getShoppingCarts();
+            foreach ($shoppingCarts as $shoppingCart) {
+                if ($shoppingCart->getIsConfirmed()) {
+                    $shoppingCartNotConfirmed = $shoppingCart;
+                }
+            }
+            if ($shoppingCartNotConfirmed === null) {
                 $shoppingCart = $this->createShoppingCart($customer);
                 $this->persistObject($shoppingCart);
             } else {
-                $shoppingCart = $customer->getShoppingCart();
+                $shoppingCart = $shoppingCartNotConfirmed;
             }
             return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
                 'customer' => $customer,
-                'shoppingCart' => $shoppingCart,
+                'shopping_cart' => $shoppingCart,
                 'individual' => true
             ]);
         }
@@ -72,11 +79,11 @@ class ShopController extends AbstractController
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $shoppingCart = $customer->getShoppingCart();
+            $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
             return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
                 'customer' => $customer,
-                'shoppingCart' => $shoppingCart
+                'shopping_cart' => $shoppingCart
             ]);
         }
         return $this->render('shop/balls.html.twig', [
@@ -101,12 +108,12 @@ class ShopController extends AbstractController
         $customer = $security->getUser();
         $product = $this->findOneByReference($reference);
         $shoppingCartProduct = new ShoppingCartProduct();
+        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
         $form = $this->createForm(ShoppingCartProductType::class, $shoppingCartProduct);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
                 if ($shoppingCartProduct->getQuantity() > 0) {
-                    $shoppingCart = $customer->getShoppingCart();
                     $shoppingCartProduct->setQuantity($shoppingCartProduct->getQuantity());
                     $shoppingCartProduct->setShoppingCart($shoppingCart);
                     $shoppingCartProduct->setProduct($product);
@@ -115,15 +122,32 @@ class ShopController extends AbstractController
                     $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
                     $this->persistObject($shoppingCart);
-                    return $this->returnRender($form, $product, 'success');
+                    return $this->returnRender($form, $product, $shoppingCart, 'success');
                 } else {
-                    return $this->returnRender($form, $product, 'quantity');
+                    return $this->returnRender($form, $product, $shoppingCart, 'quantity');
                 }
             } else {
-                return $this->returnRender($form, $product, 'login');
+                return $this->returnRender($form, $product, $shoppingCart, 'login');
             }
         }
-        return $this->returnRender($form, $product, '');
+        return $this->returnRender($form, $product, $shoppingCart, '');
+    }
+
+    /**
+     * Renvoie le panier non confirmé du client passé en paramètre.
+     *
+     * @param Customer $customer Client lié au panier.
+     *
+     * @return ShoppingCart|null
+     */
+    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
+        $result = $repository->findOneBy(array(
+            'customer' => $customer,
+            'isConfirmed' => false
+        ));
+        return $result;
     }
 
     /**
@@ -205,17 +229,19 @@ class ShopController extends AbstractController
      *
      * @param FormInterface $form Formulair ed'ajout au panier.
      * @param Product $product Produit à ajouter au panier.
+     * @param ShoppingCart $shoppingCart
      * @param string $alert Alerte définie.
      *
      * @return Response
      */
-    private function returnRender(FormInterface $form, Product $product, string $alert): ?Response
+    private function returnRender(FormInterface $form, Product $product, ShoppingCart $shoppingCart, string $alert): ?Response
     {
         if ($alert === 'success') {
             $render = $this->render('shop/product_page.html.twig', array(
                 'text_alert' => 'Le produit a été ajouté au panier.',
                 'class_alert' => 'alert-success',
                 'product' => $product,
+                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         } elseif ($alert === 'quantity') {
@@ -223,6 +249,7 @@ class ShopController extends AbstractController
                 'text_alert' => 'La quantité doit être supérieure à 0.',
                 'class_alert' => 'alert-warning',
                 'product' => $product,
+                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         } elseif ($alert === 'login') {
@@ -234,6 +261,7 @@ class ShopController extends AbstractController
             $render = $this->render(
                 'shop/product_page.html.twig', array(
                 'product' => $product,
+                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         }

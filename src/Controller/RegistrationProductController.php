@@ -47,7 +47,7 @@ class RegistrationProductController extends AbstractController
             $reference = $formProduct['reference']->getData();
             $referenceExists = $this->checkReferenceExistence($reference);
             if ($this->testImageFormat($image) && $quantity > 0 && !$referenceExists) {
-                $ball->setName(ucwords($ball->getName()));
+                $ball->setName(ucwords(strtolower($ball->getName())));
                 $ball->setImage($this->imageProcessing($image));
                 $this->persistObject($ball);
                 return $this->returnRender($formProduct, $formColor, 'good');

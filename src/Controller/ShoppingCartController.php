@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ball;
+use App\Entity\Customer;
 use App\Entity\Product;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
@@ -34,12 +35,13 @@ class ShoppingCartController extends AbstractController
     public function shoppingCart(Security $security): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $customer->getShoppingCart();
+        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
         $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
         $totalPrice = $this->calculateTotalPrice($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
-            'shopping_carts_products' => $shoppingCartsProducts,
-            'total_price' => $totalPrice
+            'shopping_cart_products' => $shoppingCartsProducts,
+            'total_price' => $totalPrice,
+            'shopping_cart' => $shoppingCart
         ));
     }
 
@@ -57,17 +59,35 @@ class ShoppingCartController extends AbstractController
     {
         $product = $this->findOneProductByReference($reference);
         $shoppingCartProduct = $this->findOneProductInCart($product);
-        $this->deleteObject($shoppingCartProduct);
+        $this->removeObject($shoppingCartProduct);
         $customer = $security->getUser();
-        $shoppingCart = $customer->getShoppingCart();
-        $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
+        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
+        $shoppingCartProducts = $this->findAllProductsInCart($shoppingCart);
         $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
         $this->persistObject($shoppingCart);
         $totalPrice = $this->calculateTotalPrice($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
-            'shopping_carts_products' => $shoppingCartsProducts,
-            'total_price' => $totalPrice
+            'shopping_cart_products' => $shoppingCartProducts,
+            'total_price' => $totalPrice,
+            'shopping_cart' => $shoppingCart
         ));
+    }
+
+    /**
+     * Renvoie le panier non confirmé du client passé en paramètre.
+     *
+     * @param Customer $customer Client lié au panier.
+     *
+     * @return ShoppingCart|null
+     */
+    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
+        $result = $repository->findOneBy(array(
+            'customer' => $customer,
+            'isConfirmed' => false
+        ));
+        return $result;
     }
 
     /**
@@ -87,7 +107,7 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Renvoie la ligne du panier contenant le produit passée en paramÃ¨tre.
+     * Renvoie la ligne du panier contenant le produit passée en paramètre.
      *
      * @param Product $product Produit qu'il faut récupérer dans le panier.
      *
@@ -128,17 +148,17 @@ class ShoppingCartController extends AbstractController
     private function calculateTotalPrice(ShoppingCart $shoppingCart): ?float
     {
         $totalPrice = 0;
-        $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
-        foreach ($shoppingCartsProducts as $shoppingCartProduct) {
+        $shoppingCartProducts = $this->findAllProductsInCart($shoppingCart);
+        foreach ($shoppingCartProducts as $shoppingCartProduct) {
             $totalPrice += $shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity();
         }
         return $totalPrice;
     }
 
     /**
-     * Permet de faire persister des objets en base de données.
+     * Permet de persister des entité en base de données.
      *
-     * @param $object
+     * @param ? $object Entité à persister.
      */
     private function persistObject($object): void
     {
@@ -152,7 +172,7 @@ class ShoppingCartController extends AbstractController
      *
      * @param ? $object Objet à supprimer.
      */
-    private function deleteObject($object): void
+    private function removeObject($object): void
     {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($object);

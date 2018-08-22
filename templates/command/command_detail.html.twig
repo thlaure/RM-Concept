@@ -4,11 +4,43 @@
 
 {% block body %}
     {{ parent() }}
-    <div class="store">
+    <div class="store pb-5 mb-5 pt-4">
         <div class="container">
             <section>
-                <h1 class="display-4">Détail de la commande</h1>
+                <h1 class="display-4 text-center mb-4">Détail de la commande</h1>
                 <p class="lead">Réf commande : {{ command.reference }}</p>
+                <article>
+                    <ul class="list-group rounded-0 shadow-sm">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="w-25 text-center">Image</div>
+                                <div class="w-20 text-center">Nom</div>
+                                <div class="w-15 text-center">Quantité</div>
+                                <div class="w-15 text-center">Prix unitaire</div>
+                                <div class="w-15 text-center">Prix</div>
+                            </div>
+                        </li>
+                        {% for shopping_cart_product in shopping_cart_products %}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="w-25 text-center"><img class="w-25" src="{{ asset('images/balls/') ~ shopping_cart_product.product.image }}" alt="Image non chargée."/></div>
+                                    <div class="w-20 text-center">{{ shopping_cart_product.product.name }}</div>
+                                    <div class="w-15 text-center">{{ shopping_cart_product.quantity }}</div>
+                                    <div class="w-15 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', ' ') }} €</div>
+                                    <div class="w-15 text-center">{{ (shopping_cart_product.product.priceIndividuals * shopping_cart_product.quantity)|number_format(2, ',', ' ') }} €</div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </article>
+                <article class="float-right m-3">
+                    <h4>Coût total de la commande : {{ command.totalPrice|number_format(2, ',', ' ') }} €</h4>
+                    <a class="btn btn-secondary rounded-0" href="{{ path('cancel') }}">Annuler la commande</a>
+                    <a class="btn btn-primary rounded-0 float-right" href="{{ path('payment') }}">Passer au paiement</a>
+                </article>
+                <article class="float-left m-3">
+                    <h4>Tarif transporteur : {{ command.haulier.price|number_format(2, ',', ' ') }} €</h4>
+                </article>
             </section>
         </div>
     </div>

@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Ball;
 use App\Entity\City;
 use App\Entity\Command;
 use App\Entity\Customer;
 use App\Entity\Haulier;
+use App\Entity\ShoppingCart;
+use App\Entity\ShoppingCartProduct;
 use App\Form\CommandType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,43 +37,71 @@ class CommandController extends AbstractController
      *
      * @return Response
      */
-    public function haulier(Request $request, Security $security): ?Response
+    public function command(Request $request, Security $security): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $customer->getShoppingCart();
-        $shoppingCart->setIsConfirmed(true);
-        $this->persistObject($shoppingCart);
-        $command = new Command();
+        $shoppingCart =$this->findShoppingCartNotConfirmed($customer);
+        if (!$this->checkCommandExistence($shoppingCart)) {
+            $command = new Command();
+            $command->setDate(new \DateTime());
+            $date = $command->getDate();
+            $command->setReference($this->generateReference($date, $customer));
+            $shoppingCart->setCommand($command);
+        } else {
+            $command = $shoppingCart->getCommand();
+        }
         $form = $this->createForm(CommandType::class, $command);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (strlen($command->getDeliveryPostalCode()) === 5 && $this->checkExistenceCity($command->getDeliveryCity(), $command->getDeliveryPostalCode())) {
+            $city = $command->getDeliveryCity();
+            $postalCode = $command->getDeliveryPostalCode();
+            if (strlen($postalCode) === 5 && $this->checkCityExistence($city, $postalCode)) {
                 $haulier = $command->getHaulier();
                 $command->setHaulier($haulier);
                 $command->setTotalPrice($this->fetchCommandTotalPrice($haulier, $customer));
-                $command->setDate(new \DateTime());
-                $command->setIndividual($customer);
-                $date = $command->getDate();
-                $command->setReference($this->generateReference($date, $customer));
+                $command->setCustomer($customer);
+                $command->setShoppingCart($shoppingCart);
+                $command->setIsPaid(false);
                 $command->setDeliveryAddress(ucwords($command->getDeliveryAddress()));
                 $command->setDeliveryComplementAddress(ucwords($command->getDeliveryComplementAddress()));
-                $command->setDeliveryPostalCode($command->getDeliveryPostalCode());
-                $command->setDeliveryCity(ucwords($command->getDeliveryCity()));
+                $command->setDeliveryPostalCode($postalCode);
+                $command->setDeliveryCity(ucwords($city));
                 $this->persistObject($command);
                 return $this->render('command/command_detail.html.twig', array(
-                    'command' => $command
+                    'command' => $command,
+                    'shopping_cart_products' => $this->findAllProductsInCart($shoppingCart),
+                    'shopping_cart' => $shoppingCart
                 ));
             } else {
                 return $this->render('command/command.html.twig', array(
                     'form' => $form->createView(),
                     'text_alert' => 'Le code postal et la ville doivent correspondre.',
-                    'class_alert' => 'alert-warning'
+                    'class_alert' => 'alert-warning',
+                    'shopping_cart' => $shoppingCart
                 ));
             }
         }
         return $this->render('command/command.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'shopping_cart' => $shoppingCart
         ));
+    }
+
+    /**
+     * Renvoie le panier non confirmé du client passé en paramètre.
+     *
+     * @param Customer $customer Client lié au panier.
+     *
+     * @return ShoppingCart|null
+     */
+    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
+        $result = $repository->findOneBy(array(
+            'customer' => $customer,
+            'isConfirmed' => false
+        ));
+        return $result;
     }
 
     /**
@@ -83,7 +114,7 @@ class CommandController extends AbstractController
      */
     private function fetchCommandTotalPrice(Haulier $haulier, Customer $customer): ?float
     {
-        $shoppingCartPrice = $customer->getShoppingCart()->getTotalPrice();
+        $shoppingCartPrice = $this->findShoppingCartNotConfirmed($customer)->getTotalPrice();
         $haulierPrice = $haulier->getPrice();
         return $shoppingCartPrice + $haulierPrice;
     }
@@ -102,6 +133,22 @@ class CommandController extends AbstractController
     }
 
     /**
+     * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
+     *
+     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
+     *
+     * @return Ball[]|ShoppingCartProduct[]|object[]
+     */
+    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
+        $result = $repository->findBy(array(
+            'shoppingCart' => $shoppingCart
+        ));
+        return $result;
+    }
+
+    /**
      * Vérifie l'existence de la ville saisie dans le formulaire.
      *
      * @param string $name Nom de la ville à vérifier.
@@ -109,7 +156,7 @@ class CommandController extends AbstractController
      *
      * @return bool
      */
-    private function checkExistenceCity(string $name, string $postalCode): bool
+    private function checkCityExistence(string $name, string $postalCode): bool
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(City::class);
         $result = $repository->findOneBy(array(
@@ -120,7 +167,23 @@ class CommandController extends AbstractController
     }
 
     /**
-     * Permet de faire persister un objet en base de données.
+     * Vérifie l'existence de la commande liée au panier en cours.
+     *
+     * @param ShoppingCart $shoppingCart Panier lié à la commande.
+     *
+     * @return bool
+     */
+    private function checkCommandExistence(ShoppingCart $shoppingCart): bool
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
+        $result = $repository->findOneBy(array(
+            'shoppingCart' => $shoppingCart
+        ));
+        return $result !== null;
+    }
+
+    /**
+     * Permet de faire persister une entité en base de données.
      *
      * @param ? $object Objet à persister.
      */

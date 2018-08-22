@@ -63,7 +63,7 @@ class Command
 
     /**
      * Ville de livraison de la commande.
-     * 
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $deliveryCity;
@@ -85,10 +85,29 @@ class Command
     /**
      * Particulier de la commande.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\Individual", inversedBy="commands")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="commands")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $individual;
+    private $customer;
+
+    /**
+     * Etat de paiement de la commande.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isPaid;
+
+    /**
+     * Panier lié à la commande.
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\ShoppingCart", cascade={"persist", "remove"})
+     */
+    private $shoppingCart;
+
+    /**
+     * Moyen de paiement de la commande.
+     */
+    private $paymentMethod;
 
     /**
      * Accesseur de l'ID de la commande.
@@ -293,25 +312,97 @@ class Command
     }
 
     /**
-     * Accesseur du particulier à qui appartient la commande.
+     * Accesseur du client à qui appartient la commande.
      *
      * @return Individual|null
      */
-    public function getIndividual(): ?Individual
+    public function getCustomer(): ?Customer
     {
-        return $this->individual;
+        return $this->customer;
     }
 
     /**
-     * Mutateur du particulier à qui appartient la commande.
+     * Mutateur du client à qui appartient la commande.
      *
-     * @param Individual|null $individual Particulier à attribuer à la commande.
+     * @param Customer|null $customer Client à attribuer à la commande.
      * 
      * @return self
      */
-    public function setIndividual(?Individual $individual): self
+    public function setCustomer(?Customer $customer): self
     {
-        $this->individual = $individual;
+        $this->customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de l'état de paiement de la commande.
+     *
+     * @return bool|null
+     */
+    public function getIsPaid(): ?bool
+    {
+        return $this->isPaid;
+    }
+
+    /**
+     * Mutateur de l'état de paiement de la commande.
+     *
+     * @param bool $isPaid Etat de paiement à attribuer à la commande.
+     *
+     * @return Command
+     */
+    public function setIsPaid(bool $isPaid): self
+    {
+        $this->isPaid = $isPaid;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur du panier lié à la commande.
+     *
+     * @return ShoppingCart|null
+     */
+    public function getShoppingCart(): ?ShoppingCart
+    {
+        return $this->shoppingCart;
+    }
+
+    /**
+     * Mutateur du panier lié à la commande.
+     *
+     * @param ShoppingCart|null $shoppingCart Panier à associer à la commande.
+     *
+     * @return Command
+     */
+    public function setShoppingCart(?ShoppingCart $shoppingCart): self
+    {
+        $this->shoppingCart = $shoppingCart;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur du moyen de paiement de la commande.
+     *
+     * @return PaymentMethod|null
+     */
+    public function getPaymentMethod(): ?PaymentMethod
+    {
+        return $this->paymentMethod;
+    }
+
+    /**
+     * Mutateur du moyen de paiement de la commande.
+     *
+     * @param PaymentMethod|null $paymentMethod Moyen de paiement à attribuer à la commande.
+     *
+     * @return Command
+     */
+    public function setPaymentMethod(?PaymentMethod $paymentMethod): self
+    {
+        $this->paymentMethod = $paymentMethod;
 
         return $this;
     }

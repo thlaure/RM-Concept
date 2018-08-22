@@ -2,32 +2,32 @@
 
 namespace App\Repository;
 
-use App\Entity\City;
+use App\Entity\Command;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * Class CityRepository.
+ * Class CommandRepository.
  *
- * @method City|null find($id, $lockMode = null, $lockVersion = null)
- * @method City|null findOneBy(array $criteria, array $orderBy = null)
- * @method City[]    findAll()
- * @method City[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Command|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Command|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Command[]    findAll()
+ * @method Command[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CityRepository extends ServiceEntityRepository
+class CommandRepository extends ServiceEntityRepository
 {
     /**
-     * CityRepository constructor.
+     * CommandRepository constructor.
      *
      * @param RegistryInterface $registry
      */
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, City::class);
+        parent::__construct($registry, Command::class);
     }
 
 //    /**
-//     * @return City[] Returns an array of City objects
+//     * @return Command[] Returns an array of Command objects
 //     */
     /*
     public function findByExampleField($value)
@@ -44,7 +44,7 @@ class CityRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?City
+    public function findOneBySomeField($value): ?Command
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.exampleField = :val')
