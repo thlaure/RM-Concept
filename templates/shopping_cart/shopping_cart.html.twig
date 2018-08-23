@@ -6,6 +6,9 @@
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
+            {% if text_alert is defined and class_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center">{{ text_alert }}</div>
+            {% endif %}
             <section>
                 <h1 class="display-4 text-center mb-4">Mon Panier</h1>
                 <article>
@@ -35,7 +38,11 @@
                 </article>
                 <article class="float-right m-3">
                     <h4>Prix total : {{ total_price|number_format(2, ',', ' ') }} €</h4>
-                    <a class="btn btn-info rounded-0 float-right" href="{{ path('choice_haulier') }}">Valider le panier</a>
+                    {% if shopping_cart.productQuantity > 0 %}
+                        <a class="btn btn-info rounded-0 float-right" href="{{ path('choice_haulier') }}">Valider le panier</a>
+                    {% else %}
+                        <a class="btn btn-info rounded-0 float-right" href="#">Valider le panier</a>
+                    {% endif %}
                 </article>
             </section>
         </div>

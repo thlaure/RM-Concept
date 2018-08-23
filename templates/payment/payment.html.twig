@@ -12,7 +12,7 @@
             <section>
                 <h1 class="display-4 text-center mb-4">Choix du moyen de paiement</h1>
                 <article class="w-50 mx-auto">
-                    <p class="lead">Total à payer : {{ total_price }} €</p>
+                    <p class="lead">Total à payer : {{ total_price|number_format(2, ',', ' ') }} €</p>
                 </article>
                 <article class="w-50 mx-auto">
                     {{ form_start(form) }}

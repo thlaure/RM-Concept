@@ -38,6 +38,8 @@ class ShoppingCartController extends AbstractController
         $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
         $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
         $totalPrice = $this->calculateTotalPrice($shoppingCart);
+        $shoppingCart->setTotalPrice($totalPrice);
+        $this->persistObject($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
             'shopping_cart_products' => $shoppingCartsProducts,
             'total_price' => $totalPrice,
@@ -64,8 +66,9 @@ class ShoppingCartController extends AbstractController
         $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
         $shoppingCartProducts = $this->findAllProductsInCart($shoppingCart);
         $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
-        $this->persistObject($shoppingCart);
         $totalPrice = $this->calculateTotalPrice($shoppingCart);
+        $shoppingCart->setTotalPrice($totalPrice);
+        $this->persistObject($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
             'shopping_cart_products' => $shoppingCartProducts,
             'total_price' => $totalPrice,

@@ -40,7 +40,7 @@ class CommandController extends AbstractController
     public function command(Request $request, Security $security): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart =$this->findShoppingCartNotConfirmed($customer);
+        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
         if (!$this->checkCommandExistence($shoppingCart)) {
             $command = new Command();
             $command->setDate(new \DateTime());

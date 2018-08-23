@@ -56,7 +56,7 @@ class CancelController extends AbstractController
     private function removeObject($object): void
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($object);
+        $entityManager->unset($object);
         $entityManager->flush();
     }
 }

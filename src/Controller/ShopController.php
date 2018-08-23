@@ -42,7 +42,7 @@ class ShopController extends AbstractController
             $shoppingCartNotConfirmed = null;
             $shoppingCarts = $customer->getShoppingCarts();
             foreach ($shoppingCarts as $shoppingCart) {
-                if ($shoppingCart->getIsConfirmed()) {
+                if (!$shoppingCart->getIsConfirmed()) {
                     $shoppingCartNotConfirmed = $shoppingCart;
                 }
             }
@@ -113,18 +113,21 @@ class ShopController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                if ($shoppingCartProduct->getQuantity() > 0) {
-                    $shoppingCartProduct->setQuantity($shoppingCartProduct->getQuantity());
+                $quantity = $shoppingCartProduct->getQuantity();
+                if ($quantity > 0) {
+                    $shoppingCartProduct->setQuantity($quantity);
                     $shoppingCartProduct->setShoppingCart($shoppingCart);
                     $shoppingCartProduct->setProduct($product);
-                    $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity());
+                    $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $quantity);
                     $this->persistObject($shoppingCartProduct);
                     $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
                     $this->persistObject($shoppingCart);
                     return $this->returnRender($form, $product, $shoppingCart, 'success');
+                } elseif (!$quantity > 0) {
+                    return $this->returnRender($form, $product, $shoppingCart, 'quantityZero');
                 } else {
-                    return $this->returnRender($form, $product, $shoppingCart, 'quantity');
+                    return $this->returnRender($form, $product, $shoppingCart, 'quantityInt');
                 }
             } else {
                 return $this->returnRender($form, $product, $shoppingCart, 'login');
@@ -244,9 +247,17 @@ class ShopController extends AbstractController
                 'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
-        } elseif ($alert === 'quantity') {
+        } elseif ($alert === 'quantityZero') {
             $render = $this->render('shop/product_page.html.twig', array(
                 'text_alert' => 'La quantité doit être supérieure à 0.',
+                'class_alert' => 'alert-warning',
+                'product' => $product,
+                'shopping_cart' => $shoppingCart,
+                'form' => $form->createView()
+            ));
+        } elseif ($alert === 'quantityInt') {
+            $render = $this->render('shop/product_page.html.twig', array(
+                'text_alert' => 'La quantité saisie doit avoir une valeur valide.',
                 'class_alert' => 'alert-warning',
                 'product' => $product,
                 'shopping_cart' => $shoppingCart,

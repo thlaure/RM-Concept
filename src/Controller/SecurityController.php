@@ -70,12 +70,11 @@ class SecurityController extends AbstractController
     {
         $customer = $security->getUser();
         $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
-        if (!$shoppingCart->getIsConfirmed()) {
-            $this->removeAllShoppingCartProducts($shoppingCart);
-            $this->resetShoppingCart($shoppingCart);
-        }
+        $this->removeAllShoppingCartProducts($shoppingCart);
+        $this->resetShoppingCart($shoppingCart);
         return $this->render('security/logout.html.twig', array(
-            'error' => ''
+            'error' => '',
+            'shopping_cart' => $shoppingCart
         ));
     }
 
