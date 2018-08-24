@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Customer;
-use App\Entity\ShoppingCart;
+use App\Entity\ShoppingCartConfirmed;
+use App\Entity\ShoppingCartNotConfirmed;
 use App\Form\PaymentType;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,13 +30,14 @@ class PaymentController extends AbstractController
      *
      * @param Request $request
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */
-    public function payment(Request $request, Security $security): ?Response
+    public function payment(Request $request, Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
+        $shoppingCart = $customer->getShoppingCartNotConfirmed();
         $command = $shoppingCart->getCommand();
         $totalPrice = $command->getTotalPrice();
         $form = $this->createForm(PaymentType::class, $command);
@@ -43,50 +45,56 @@ class PaymentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $command->setPaymentMethod($command->getPaymentMethod());
             $command->setIsPaid(true);
-            $shoppingCart->setIsConfirmed(true);
-            $this->persistObject($shoppingCart);
-            $this->persistObject($command);
+            $shoppingCartConfirmed = $this->createShoppingCartConfirmed($shoppingCart);
+            $command->setShoppingCart($shoppingCartConfirmed);
+            $entityManipulation->persistObject($shoppingCartConfirmed);
+            $entityManipulation->persistObject($command);
+            $this->changeShoppingCart($shoppingCart, $shoppingCartConfirmed, $entityManipulation);
+            $entityManipulation->resetShoppingCart($shoppingCart);
             return $this->render('payment/payment.html.twig', array(
                 'form' => $form->createView(),
                 'total_price' => $totalPrice,
                 'text_alert' => 'Paiement effectué.',
-                'class_alert' => 'alert-success',
-                'shopping_cart' => $shoppingCart
+                'class_alert' => 'alert-success'
             ));
         }
         return $this->render('payment/payment.html.twig', array(
             'form' => $form->createView(),
-            'total_price' => $totalPrice,
-            'shopping_cart' => $shoppingCart
+            'total_price' => $totalPrice
         ));
     }
 
     /**
-     * Renvoie le panier non confirmé du client passé en paramètre.
+     * Instancie la classe ShoppingCartConfirmed à partir du panier passé en paramètre.
      *
-     * @param Customer $customer Client lié au panier.
+     * @param ShoppingCartNotConfirmed $shoppingCart
      *
-     * @return ShoppingCart|null
+     * @return null|ShoppingCartConfirmed
      */
-    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
+    private function createShoppingCartConfirmed(ShoppingCartNotConfirmed $shoppingCart): ?ShoppingCartConfirmed
     {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
-        $result = $repository->findOneBy(array(
-            'customer' => $customer,
-            'isConfirmed' => false
-        ));
-        return $result;
+        $shoppingCartConfirmed = new ShoppingCartConfirmed();
+        $shoppingCartConfirmed->setCustomer($shoppingCart->getCustomer());
+        $shoppingCartConfirmed->setTotalPrice($shoppingCart->getTotalPrice());
+        $shoppingCartConfirmed->setProductQuantity($shoppingCart->getProductQuantity());
+        $shoppingCartConfirmed->setIsConfirmed(true);
+        $shoppingCartConfirmed->setCommand($shoppingCart->getCommand());
+        $shoppingCartConfirmed->setIsSaved(false);
+        return $shoppingCartConfirmed;
     }
 
     /**
-     * Permet de persister une entité en base de données.
+     * Envoie les produits du panier non confirmé dans le panier confirmé.
      *
-     * @param ? $object Objet à persister.
+     * @param ShoppingCartNotConfirmed $shoppingCartNotConfirmed Panier d'où viennent les produits.
+     * @param ShoppingCartConfirmed $shoppingCartConfirmed Panier où vont les produits.
+     * @param EntityManipulation $entityManipulation
      */
-    private function persistObject($object): void
+    private function changeShoppingCart(ShoppingCartNotConfirmed $shoppingCartNotConfirmed, ShoppingCartConfirmed $shoppingCartConfirmed, EntityManipulation $entityManipulation): void
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($object);
-        $entityManager->flush();
+        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCartNotConfirmed);
+        foreach ($shoppingCartProducts as $shoppingCartProduct) {
+            $shoppingCartProduct->setShoppingCart($shoppingCartConfirmed);
+        }
     }
 }

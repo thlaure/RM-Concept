@@ -10,6 +10,7 @@ use App\Entity\Haulier;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
 use App\Form\CommandType;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,10 +38,10 @@ class CommandController extends AbstractController
      *
      * @return Response
      */
-    public function command(Request $request, Security $security): ?Response
+    public function command(Request $request, Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
+        $shoppingCart = $customer->getShoppingCartNotConfirmed();
         if (!$this->checkCommandExistence($shoppingCart)) {
             $command = new Command();
             $command->setDate(new \DateTime());
@@ -66,42 +67,22 @@ class CommandController extends AbstractController
                 $command->setDeliveryComplementAddress(ucwords($command->getDeliveryComplementAddress()));
                 $command->setDeliveryPostalCode($postalCode);
                 $command->setDeliveryCity(ucwords($city));
-                $this->persistObject($command);
+                $entityManipulation->persistObject($command);
                 return $this->render('command/command_detail.html.twig', array(
                     'command' => $command,
-                    'shopping_cart_products' => $this->findAllProductsInCart($shoppingCart),
-                    'shopping_cart' => $shoppingCart
+                    'shopping_cart_products' => $entityManipulation->findAllProductsInCart($shoppingCart)
                 ));
             } else {
                 return $this->render('command/command.html.twig', array(
                     'form' => $form->createView(),
                     'text_alert' => 'Le code postal et la ville doivent correspondre.',
-                    'class_alert' => 'alert-warning',
-                    'shopping_cart' => $shoppingCart
+                    'class_alert' => 'alert-warning'
                 ));
             }
         }
         return $this->render('command/command.html.twig', array(
-            'form' => $form->createView(),
-            'shopping_cart' => $shoppingCart
+            'form' => $form->createView()
         ));
-    }
-
-    /**
-     * Renvoie le panier non confirmé du client passé en paramètre.
-     *
-     * @param Customer $customer Client lié au panier.
-     *
-     * @return ShoppingCart|null
-     */
-    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
-        $result = $repository->findOneBy(array(
-            'customer' => $customer,
-            'isConfirmed' => false
-        ));
-        return $result;
     }
 
     /**
@@ -114,7 +95,7 @@ class CommandController extends AbstractController
      */
     private function fetchCommandTotalPrice(Haulier $haulier, Customer $customer): ?float
     {
-        $shoppingCartPrice = $this->findShoppingCartNotConfirmed($customer)->getTotalPrice();
+        $shoppingCartPrice = $customer->getShoppingCartNotConfirmed()->getTotalPrice();
         $haulierPrice = $haulier->getPrice();
         return $shoppingCartPrice + $haulierPrice;
     }
@@ -130,22 +111,6 @@ class CommandController extends AbstractController
     private function generateReference(\DateTime $date, Customer $customer): ?string
     {
         return 'C' . $date->format('ym') . $customer->getReference() . rand(10, 99);
-    }
-
-    /**
-     * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
-     *
-     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
-     *
-     * @return Ball[]|ShoppingCartProduct[]|object[]
-     */
-    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findBy(array(
-            'shoppingCart' => $shoppingCart
-        ));
-        return $result;
     }
 
     /**
@@ -180,17 +145,5 @@ class CommandController extends AbstractController
             'shoppingCart' => $shoppingCart
         ));
         return $result !== null;
-    }
-
-    /**
-     * Permet de faire persister une entité en base de données.
-     *
-     * @param ? $object Objet à persister.
-     */
-    private function persistObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($object);
-        $entityManager->flush();
     }
 }

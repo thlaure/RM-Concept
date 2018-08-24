@@ -6,6 +6,7 @@ use App\Entity\Ball;
 use App\Entity\Color;
 use App\Form\ColorType;
 use App\Form\ProductType;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -33,7 +34,7 @@ class RegistrationProductController extends AbstractController
      *
      * @return Response
      */
-    public function register(Request $request): ?Response
+    public function register(Request $request, EntityManipulation $entityManipulation): ?Response
     {
         $ball = new Ball();
         $color = new Color();
@@ -49,7 +50,7 @@ class RegistrationProductController extends AbstractController
             if ($this->testImageFormat($image) && $quantity > 0 && !$referenceExists) {
                 $ball->setName(ucwords(strtolower($ball->getName())));
                 $ball->setImage($this->imageProcessing($image));
-                $this->persistObject($ball);
+                $entityManipulation->persistObject($ball);
                 return $this->returnRender($formProduct, $formColor, 'good');
             } elseif ($quantity <= 0) {
                 return $this->returnRender($formProduct, $formColor, 'quantity');
@@ -63,25 +64,13 @@ class RegistrationProductController extends AbstractController
             $color->setName($name);
             $colorExists = $this->checkColorExistence($name, $formColor['color_code']->getData());
             if (!$colorExists) {
-                $this->persistObject($color);
+                $entityManipulation->persistObject($color);
                 return $this->returnRender($formProduct, $formColor, 'good');
             } else {
                 return $this->returnRender($formProduct, $formColor, 'color');
             }
         }
         return $this->returnRender($formProduct, $formColor, '');
-    }
-
-    /**
-     * Permet de faire persister des objets en base de données.
-     *
-     * @param ? $object Objet à persister.
-     */
-    private function persistObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($object);
-        $entityManager->flush();
     }
 
     /**

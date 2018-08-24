@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Entity\Individual;
 use App\Form\CustomerType;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,12 +31,13 @@ class RegistrationController extends AbstractController
      *
      * @param Request $request
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param EntityManipulation $entityManipulation
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
      * @throws \Exception
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManipulation $entityManipulation): ?Response
     {
         $individual = new Individual();
         $form = $this->createForm(CustomerType::class, $individual);
@@ -50,7 +52,7 @@ class RegistrationController extends AbstractController
                 $individual->setAddressComplement(ucwords($individual->getAddressComplement()));
                 $individual->setCity(ucwords($individual->getCity()));
                 $individual->setReference($this->generateReference());
-                $this->persistObject($individual);
+                $entityManipulation->persistObject($individual);
                 return $this->returnRender($form, 'success');
             } elseif (strlen($individual->getPostalCode()) !== 5) {
                 return $this->returnRender($form, 'postalCode');
@@ -65,18 +67,6 @@ class RegistrationController extends AbstractController
             }
         }
         return $this->returnRender($form, '');
-    }
-
-    /**
-     * Permet de faire persister une entité en base de données.
-     *
-     * @param ? $object Objet à persister.
-     */
-    private function persistObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($object);
-        $entityManager->flush();
     }
 
     /**
@@ -105,11 +95,9 @@ class RegistrationController extends AbstractController
     private function checkReferenceExistence(string $reference): ?bool
     {
         $repository = $this->getDoctrine()->getRepository(Individual::class);
-        $result = $repository->findOneBy(
-            array(
-                'reference' => $reference
-            )
-        );
+        $result = $repository->findOneBy(array(
+            'reference' => $reference
+        ));
         return $result !== null;
     }
 
@@ -123,11 +111,9 @@ class RegistrationController extends AbstractController
     private function checkEmailExistence(string $email): ?bool
     {
         $repository = $this->getDoctrine()->getRepository(Individual::class);
-        $result = $repository->findOneBy(
-            array(
-                'email' => $email
-            )
-        );
+        $result = $repository->findOneBy(array(
+            'email' => $email
+        ));
         return $result !== null;
     }
 

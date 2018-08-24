@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Customer;
 use App\Entity\ShoppingCart;
-use App\Entity\ShoppingCartProduct;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -63,90 +62,32 @@ class SecurityController extends AbstractController
      * @Route("/prelogout", name="pre_logout")
      *
      * @param Security $security
+     * @param EntityManipulation$entityManipulation
      *
      * @return Response
      */
-    public function preLogout(Security $security): ?Response
+    public function preLogout(Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
-        $this->removeAllShoppingCartProducts($shoppingCart);
-        $this->resetShoppingCart($shoppingCart);
+        $shoppingCart = $customer->getShoppingCartNotConfirmed();
+        $this->removeAllShoppingCartProducts($shoppingCart, $entityManipulation);
+        $entityManipulation->resetShoppingCart($shoppingCart);
         return $this->render('security/logout.html.twig', array(
-            'error' => '',
-            'shopping_cart' => $shoppingCart
+            'error' => ''
         ));
-    }
-
-    /**
-     * Renvoie le panier non confirmé du client passé en paramètre.
-     *
-     * @param Customer $customer Client lié au panier.
-     *
-     * @return ShoppingCart|null
-     */
-    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
-        $result = $repository->findOneBy(array(
-            'customer' => $customer,
-            'isConfirmed' => false
-        ));
-        return $result;
     }
 
     /**
      * Supprime toutes les données présentes dans le panier passé en paramètre.
      *
      * @param ShoppingCart $shoppingCart Panier dont on veut supprimer les données.
+     * @param EntityManipulation $entityManipulation
      */
-    private function removeAllShoppingCartProducts(ShoppingCart $shoppingCart): void
+    private function removeAllShoppingCartProducts(ShoppingCart $shoppingCart, EntityManipulation $entityManipulation): void
     {
-        $shoppingCartsProducts = $this->findAllShoppingCartProducts($shoppingCart);
+        $shoppingCartsProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
         foreach ($shoppingCartsProducts as $shoppingCartProduct) {
-            $this->removeObject($shoppingCartProduct);
+            $entityManipulation->removeObject($shoppingCartProduct);
         }
-    }
-
-    /**
-     * Supprime une entité.
-     *
-     * @param ? $object Entité que l'on souhaite supprimer.
-     */
-    private function removeObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($object);
-        $entityManager->flush();
-    }
-
-    /**
-     * Réinitialise le panier passé en paramètre.
-     *
-     * @param ShoppingCart $shoppingCart Panier à réinitialiser.
-     */
-    private function resetShoppingCart(ShoppingCart $shoppingCart)
-    {
-        $shoppingCart->setTotalPrice(0);
-        $shoppingCart->setProductQuantity(0);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($shoppingCart);
-        $entityManager->flush();
-    }
-
-    /**
-     * Renvoie un tableau avec toutes les entités ShoppingCartProduct liées au panier passé en paramètre.
-     *
-     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer les enregistrements liés.
-     *
-     * @return ShoppingCartProduct[]|object[]
-     */
-    private function findAllShoppingCartProducts(ShoppingCart $shoppingCart): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findBy(array(
-            'shoppingCart' => $shoppingCart
-        ));
-        return $result;
     }
 }

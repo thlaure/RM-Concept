@@ -6,8 +6,10 @@ use App\Entity\Ball;
 use App\Entity\Customer;
 use App\Entity\Product;
 use App\Entity\ShoppingCart;
+use App\Entity\ShoppingCartNotConfirmed;
 use App\Entity\ShoppingCartProduct;
 use App\Form\ShoppingCartProductType;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,25 +34,21 @@ class ShopController extends AbstractController
      * @Route("/shop/customizable-balls", name="shop_customizable-balls")
      *
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return null|Response
      */
-    public function shop(Security $security): ?Response
+    public function shop(Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $shoppingCartNotConfirmed = null;
-            $shoppingCarts = $customer->getShoppingCarts();
-            foreach ($shoppingCarts as $shoppingCart) {
-                if (!$shoppingCart->getIsConfirmed()) {
-                    $shoppingCartNotConfirmed = $shoppingCart;
-                }
-            }
-            if ($shoppingCartNotConfirmed === null) {
+            if ($customer->getShoppingCartNotConfirmed() === null) {
                 $shoppingCart = $this->createShoppingCart($customer);
-                $this->persistObject($shoppingCart);
+                $entityManipulation->persistObject($shoppingCart);
+                $customer->setShoppingCartNotConfirmed($shoppingCart);
+                $entityManipulation->persistObject($customer);
             } else {
-                $shoppingCart = $shoppingCartNotConfirmed;
+                $shoppingCart = $customer->getShoppingCartNotConfirmed();
             }
             return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
@@ -79,7 +77,7 @@ class ShopController extends AbstractController
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
+            $shoppingCart = $customer->getShoppingCartNotConfirmed();
             return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
                 'customer' => $customer,
@@ -99,58 +97,42 @@ class ShopController extends AbstractController
      *
      * @param Request $request
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      * @param string $reference Référence du produit.
      *
      * @return Response
      */
-    public function productPage(Request $request, Security $security, string $reference): ?Response
+    public function productPage(Request $request, Security $security, EntityManipulation $entityManipulation, string $reference): ?Response
     {
         $customer = $security->getUser();
         $product = $this->findOneByReference($reference);
         $shoppingCartProduct = new ShoppingCartProduct();
-        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
         $form = $this->createForm(ShoppingCartProductType::class, $shoppingCartProduct);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
+                $shoppingCart = $customer->getShoppingCartNotConfirmed();
                 $quantity = $shoppingCartProduct->getQuantity();
                 if ($quantity > 0) {
                     $shoppingCartProduct->setQuantity($quantity);
                     $shoppingCartProduct->setShoppingCart($shoppingCart);
                     $shoppingCartProduct->setProduct($product);
                     $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $quantity);
-                    $this->persistObject($shoppingCartProduct);
-                    $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
+                    $entityManipulation->persistObject($shoppingCartProduct);
+                    $shoppingCart->setProductQuantity(count($entityManipulation->findAllProductsInCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
-                    $this->persistObject($shoppingCart);
-                    return $this->returnRender($form, $product, $shoppingCart, 'success');
+                    $entityManipulation->persistObject($shoppingCart);
+                    return $this->returnRender($form, $product,'success');
                 } elseif (!$quantity > 0) {
-                    return $this->returnRender($form, $product, $shoppingCart, 'quantityZero');
+                    return $this->returnRender($form, $product,'quantityZero');
                 } else {
-                    return $this->returnRender($form, $product, $shoppingCart, 'quantityInt');
+                    return $this->returnRender($form, $product,'quantityInt');
                 }
             } else {
-                return $this->returnRender($form, $product, $shoppingCart, 'login');
+                return $this->returnRender($form, $product,'login');
             }
         }
-        return $this->returnRender($form, $product, $shoppingCart, '');
-    }
-
-    /**
-     * Renvoie le panier non confirmé du client passé en paramètre.
-     *
-     * @param Customer $customer Client lié au panier.
-     *
-     * @return ShoppingCart|null
-     */
-    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
-        $result = $repository->findOneBy(array(
-            'customer' => $customer,
-            'isConfirmed' => false
-        ));
-        return $result;
+        return $this->returnRender($form, $product, '');
     }
 
     /**
@@ -182,22 +164,6 @@ class ShopController extends AbstractController
     }
 
     /**
-     * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
-     *
-     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
-     *
-     * @return Ball[]|ShoppingCartProduct[]|object[]
-     */
-    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findBy(array(
-            'shoppingCart' => $shoppingCart
-        ));
-        return $result;
-    }
-
-    /**
      * Instancie la classe ShoppingCart.
      *
      * @param Customer $customer Client à qui appartient le panier.
@@ -206,7 +172,7 @@ class ShopController extends AbstractController
      */
     private function createShoppingCart(Customer $customer): ?ShoppingCart
     {
-        $shoppingCart = new ShoppingCart();
+        $shoppingCart = new ShoppingCartNotConfirmed();
         $shoppingCart->setCustomer($customer);
         $shoppingCart->setProductQuantity(0);
         $shoppingCart->setIsConfirmed(false);
@@ -216,35 +182,21 @@ class ShopController extends AbstractController
     }
 
     /**
-     * Permet de faire persister des objets en base de données.
-     *
-     * @param $object
-     */
-    private function persistObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($object);
-        $entityManager->flush();
-    }
-
-    /**
      * Renvoie le message approprié en fonction du besoin.
      *
      * @param FormInterface $form Formulair ed'ajout au panier.
      * @param Product $product Produit à ajouter au panier.
-     * @param ShoppingCart $shoppingCart
      * @param string $alert Alerte définie.
      *
      * @return Response
      */
-    private function returnRender(FormInterface $form, Product $product, ShoppingCart $shoppingCart, string $alert): ?Response
+    private function returnRender(FormInterface $form, Product $product, string $alert): ?Response
     {
         if ($alert === 'success') {
             $render = $this->render('shop/product_page.html.twig', array(
                 'text_alert' => 'Le produit a été ajouté au panier.',
                 'class_alert' => 'alert-success',
                 'product' => $product,
-                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         } elseif ($alert === 'quantityZero') {
@@ -252,7 +204,6 @@ class ShopController extends AbstractController
                 'text_alert' => 'La quantité doit être supérieure à 0.',
                 'class_alert' => 'alert-warning',
                 'product' => $product,
-                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         } elseif ($alert === 'quantityInt') {
@@ -260,7 +211,6 @@ class ShopController extends AbstractController
                 'text_alert' => 'La quantité saisie doit avoir une valeur valide.',
                 'class_alert' => 'alert-warning',
                 'product' => $product,
-                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         } elseif ($alert === 'login') {
@@ -272,7 +222,6 @@ class ShopController extends AbstractController
             $render = $this->render(
                 'shop/product_page.html.twig', array(
                 'product' => $product,
-                'shopping_cart' => $shoppingCart,
                 'form' => $form->createView()
             ));
         }

@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Ball;
-use App\Entity\Customer;
 use App\Entity\Product;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,21 +28,21 @@ class ShoppingCartController extends AbstractController
      * @Route("/shopping-cart", name="shopping_cart")
      *
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */
-    public function shoppingCart(Security $security): ?Response
+    public function shoppingCart(Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
-        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
-        $shoppingCartsProducts = $this->findAllProductsInCart($shoppingCart);
-        $totalPrice = $this->calculateTotalPrice($shoppingCart);
+        $shoppingCart = $customer->getShoppingCartNotConfirmed();
+        $shoppingCartsProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
+        $totalPrice = $this->calculateTotalPrice($shoppingCart, $entityManipulation);
         $shoppingCart->setTotalPrice($totalPrice);
-        $this->persistObject($shoppingCart);
+        $entityManipulation->persistObject($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
             'shopping_cart_products' => $shoppingCartsProducts,
-            'total_price' => $totalPrice,
-            'shopping_cart' => $shoppingCart
+            'total_price' => $totalPrice
         ));
     }
 
@@ -54,43 +53,26 @@ class ShoppingCartController extends AbstractController
      *
      * @param string $reference Référence du produit à supprimer du panier.
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return null|Response
      */
-    public function deleteShoppingCartProduct(string $reference, Security $security): ?Response
+    public function deleteShoppingCartProduct(string $reference, Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $product = $this->findOneProductByReference($reference);
         $shoppingCartProduct = $this->findOneProductInCart($product);
-        $this->removeObject($shoppingCartProduct);
+        $entityManipulation->removeObject($shoppingCartProduct);
         $customer = $security->getUser();
-        $shoppingCart = $this->findShoppingCartNotConfirmed($customer);
-        $shoppingCartProducts = $this->findAllProductsInCart($shoppingCart);
-        $shoppingCart->setProductQuantity(count($this->findAllProductsInCart($shoppingCart)));
-        $totalPrice = $this->calculateTotalPrice($shoppingCart);
+        $shoppingCart = $customer->getShoppingCartNotConfirmed();
+        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
+        $shoppingCart->setProductQuantity(count($shoppingCartProducts));
+        $totalPrice = $this->calculateTotalPrice($shoppingCart, $entityManipulation);
         $shoppingCart->setTotalPrice($totalPrice);
-        $this->persistObject($shoppingCart);
+        $entityManipulation->persistObject($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
             'shopping_cart_products' => $shoppingCartProducts,
-            'total_price' => $totalPrice,
-            'shopping_cart' => $shoppingCart
+            'total_price' => $totalPrice
         ));
-    }
-
-    /**
-     * Renvoie le panier non confirmé du client passé en paramètre.
-     *
-     * @param Customer $customer Client lié au panier.
-     *
-     * @return ShoppingCart|null
-     */
-    private function findShoppingCartNotConfirmed(Customer $customer): ?ShoppingCart
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
-        $result = $repository->findOneBy(array(
-            'customer' => $customer,
-            'isConfirmed' => false
-        ));
-        return $result;
     }
 
     /**
@@ -126,59 +108,20 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
-     *
-     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
-     *
-     * @return Ball[]|ShoppingCartProduct[]|object[]
-     */
-    private function findAllProductsInCart(ShoppingCart $shoppingCart): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findBy(array(
-            'shoppingCart' => $shoppingCart
-        ));
-        return $result;
-    }
-
-    /**
      * Renvoie le prix total du panier.
      *
      * @param ShoppingCart $shoppingCart Panier dont il faut calculer le montant total.
+     * @param EntityManipulation $entityManipulation
      *
      * @return float|int|null
      */
-    private function calculateTotalPrice(ShoppingCart $shoppingCart): ?float
+    private function calculateTotalPrice(ShoppingCart $shoppingCart, EntityManipulation $entityManipulation): ?float
     {
         $totalPrice = 0;
-        $shoppingCartProducts = $this->findAllProductsInCart($shoppingCart);
+        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
         foreach ($shoppingCartProducts as $shoppingCartProduct) {
             $totalPrice += $shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity();
         }
         return $totalPrice;
-    }
-
-    /**
-     * Permet de persister des entité en base de données.
-     *
-     * @param ? $object Entité à persister.
-     */
-    private function persistObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($object);
-        $entityManager->flush();
-    }
-
-    /**
-     * Supprime l'entité passée en paramètre.
-     *
-     * @param ? $object Objet à supprimer.
-     */
-    private function removeObject($object): void
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($object);
-        $entityManager->flush();
     }
 }

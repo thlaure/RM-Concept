@@ -133,6 +133,13 @@ abstract class Customer implements UserInterface, \Serializable
     private $plainPassword;
 
     /**
+     * Panier non confirmé du client.
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\ShoppingCartNotConfirmed", cascade={"persist", "remove"})
+     */
+    private $shoppingCartNotConfirmed;
+
+    /**
      * Customer constructor.
      */
     public function __construct()
@@ -601,5 +608,29 @@ abstract class Customer implements UserInterface, \Serializable
             $this->email,
             $this->password
         ) = unserialize($serialized, array('allowed_classes' => false));
+    }
+
+    /**
+     * Accesseur du panier non confirmé du client.
+     *
+     * @return ShoppingCartNotConfirmed|null
+     */
+    public function getShoppingCartNotConfirmed(): ?ShoppingCartNotConfirmed
+    {
+        return $this->shoppingCartNotConfirmed;
+    }
+
+    /**
+     * Mutateur du panier non confirmé du client.
+     *
+     * @param ShoppingCartNotConfirmed|null $shoppingCartNotConfirmed Panier non confirmé à attribuer au client.
+     *
+     * @return Customer
+     */
+    public function setShoppingCartNotConfirmed(?ShoppingCartNotConfirmed $shoppingCartNotConfirmed): self
+    {
+        $this->shoppingCartNotConfirmed = $shoppingCartNotConfirmed;
+
+        return $this;
     }
 }

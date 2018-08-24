@@ -38,7 +38,7 @@
                 </article>
                 <article class="float-right m-3">
                     <h4>Prix total : {{ total_price|number_format(2, ',', ' ') }} €</h4>
-                    {% if shopping_cart.productQuantity > 0 %}
+                    {% if app.user.shoppingCartNotConfirmed.productQuantity > 0 %}
                         <a class="btn btn-info rounded-0 float-right" href="{{ path('choice_haulier') }}">Valider le panier</a>
                     {% else %}
                         <a class="btn btn-info rounded-0 float-right" href="#">Valider le panier</a>

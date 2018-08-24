@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Class ShoppingCart.
  *
  * @ORM\Entity(repositoryClass="App\Repository\ShoppingCartRepository")
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="confirmed", type="string")
+ * @ORM\DiscriminatorMap({"confirmed" = "ShoppingCartConfirmed", "notConfirmed" = "ShoppingCartNotConfirmed"})
  *
  * @category Symfony4
  * @package  App\Entity
@@ -17,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
  * @link     https://symfony.com/
  */
-class ShoppingCart
+abstract class ShoppingCart
 {
     /**
      * ID du panier.
@@ -53,6 +56,7 @@ class ShoppingCart
      * Client à qui appartient le panier.
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="shoppingCarts")
+     *
      */
     private $customer;
 

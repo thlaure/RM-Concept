@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"produit" = "Product", "balle" = "Ball"})
+ * @ORM\DiscriminatorMap({"balle" = "Ball"})
  *
  * @category Symfony4
  * @package  App\Entity
@@ -18,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
  * @link     https://symfony.com/
  */
-class Product
+abstract class Product
 {
     /**
      * ID du produit.
