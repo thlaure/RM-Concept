@@ -23,10 +23,10 @@ class CancelController extends AbstractController
     {
         $customer = $security->getUser();
         $shoppingCart = $customer->getShoppingCartNotConfirmed();
-        $command = $shoppingCart->getCommand();
-        $entityManipulation->removeObject($command);
+        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
         return $this->render('shopping_cart/shopping_cart.html.twig', array(
-            'total_price' => $shoppingCart->getTotalPrice()
+            'total_price' => $shoppingCart->getTotalPrice(),
+            'shopping_cart_products' => $shoppingCartProducts
         ));
     }
 }

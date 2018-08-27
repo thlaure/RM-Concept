@@ -41,13 +41,6 @@ class Haulier
     private $price;
 
     /**
-     * Description du transporteur.
-     *
-     * @ORM\Column(type="text")
-     */
-    private $description;
-
-    /**
      * Acesseur de l'ID du transporteur.
      *
      * @return int|null
@@ -101,30 +94,6 @@ class Haulier
     public function setPrice(float $price): self
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Accesseur de la description du transporteur.
-     *
-     * @return null|string
-     */
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * Mutateur de la description du transporteur.
-     *
-     * @param string $description Description à attribuer au transporteur.
-     *
-     * @return Haulier
-     */
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
 
         return $this;
     }

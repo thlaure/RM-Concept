@@ -2,13 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Ball;
 use App\Entity\City;
 use App\Entity\Command;
 use App\Entity\Customer;
 use App\Entity\Haulier;
+use App\Entity\Individual;
 use App\Entity\ShoppingCart;
-use App\Entity\ShoppingCartProduct;
 use App\Form\CommandType;
 use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +34,7 @@ class CommandController extends AbstractController
      *
      * @param Request $request
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */

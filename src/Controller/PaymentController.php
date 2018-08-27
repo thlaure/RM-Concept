@@ -51,11 +51,9 @@ class PaymentController extends AbstractController
             $entityManipulation->persistObject($command);
             $this->changeShoppingCart($shoppingCart, $shoppingCartConfirmed, $entityManipulation);
             $entityManipulation->resetShoppingCart($shoppingCart);
-            return $this->render('payment/payment.html.twig', array(
-                'form' => $form->createView(),
-                'total_price' => $totalPrice,
-                'text_alert' => 'Paiement effectué.',
-                'class_alert' => 'alert-success'
+            return $this->render('payment/payment_confirmation.html.twig', array(
+                'class_alert' => 'alert-success',
+                'text_alert' => 'Paiement effectué.'
             ));
         }
         return $this->render('payment/payment.html.twig', array(

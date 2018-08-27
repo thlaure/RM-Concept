@@ -51,7 +51,7 @@ class RegistrationProductController extends AbstractController
                 $ball->setName(ucwords(strtolower($ball->getName())));
                 $ball->setImage($this->imageProcessing($image));
                 $entityManipulation->persistObject($ball);
-                return $this->returnRender($formProduct, $formColor, 'good');
+                return $this->returnRender($formProduct, $formColor, 'goodProduct');
             } elseif ($quantity <= 0) {
                 return $this->returnRender($formProduct, $formColor, 'quantity');
             } elseif ($referenceExists) {
@@ -65,7 +65,7 @@ class RegistrationProductController extends AbstractController
             $colorExists = $this->checkColorExistence($name, $formColor['color_code']->getData());
             if (!$colorExists) {
                 $entityManipulation->persistObject($color);
-                return $this->returnRender($formProduct, $formColor, 'good');
+                return $this->returnRender($formProduct, $formColor, 'goodColor');
             } else {
                 return $this->returnRender($formProduct, $formColor, 'color');
             }
@@ -162,12 +162,21 @@ class RegistrationProductController extends AbstractController
      */
     private function returnRender(FormInterface $formProduct, FormInterface $formColor, string $alert): ?Response
     {
-        if ($alert === 'good') {
+        if ($alert === 'goodProduct') {
             $render = $this->render(
                 'registration_product/registration_product.html.twig',array(
                     'form_product' => $formProduct->createView(),
                     'form_color' => $formColor->createView(),
                     'text_alert' => 'Le produit a bien été enregistré.',
+                    'class_alert' => 'alert-success'
+                )
+            );
+        } elseif ($alert === 'goodColor') {
+            $render = $this->render(
+                'registration_product/registration_product.html.twig',array(
+                    'form_product' => $formProduct->createView(),
+                    'form_color' => $formColor->createView(),
+                    'text_alert' => 'La couleur a bien été enregistrée.',
                     'class_alert' => 'alert-success'
                 )
             );

@@ -38,6 +38,7 @@
                         {{ form_widget(form.delivery_city, {'attr': {'class': 'form-control rounded-0'}}) }}
                     </div>
                     <div class="text-center">
+                        <a class="btn btn-secondary rounded-0" href="{{ path('cancel') }}">Annuler la commande</a>
                         <button class="btn btn-primary rounded-0" type="submit">Valider</button>
                     </div>
                     {{ form_end(form) }}
