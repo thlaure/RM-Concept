@@ -6,7 +6,6 @@ use App\Entity\City;
 use App\Entity\Command;
 use App\Entity\Customer;
 use App\Entity\Haulier;
-use App\Entity\Individual;
 use App\Entity\ShoppingCart;
 use App\Form\CommandType;
 use App\Service\EntityManipulation;

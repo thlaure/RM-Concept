@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Command;
+use App\Entity\Customer;
 use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,7 @@ class CancelController extends AbstractController
      * @Route("/cancel", name="cancel")
      *
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */

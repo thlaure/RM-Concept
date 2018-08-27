@@ -43,7 +43,6 @@ class EntityManipulation extends AbstractController
     {
         $shoppingCart->setTotalPrice(0);
         $shoppingCart->setProductQuantity(0);
-        $shoppingCart->setCommand(null);
         $this->persistObject($shoppingCart);
     }
 
