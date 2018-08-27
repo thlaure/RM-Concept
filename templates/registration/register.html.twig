@@ -44,6 +44,7 @@
                     <div class="form-group">
                         {{ form_label(form.email, 'Adresse mail *') }}
                         {{ form_widget(form.email, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        <small id="emailHelp" class="form-text text-muted">Nous ne partagerons pas votre adresse e-mail avec des tiers.</small>
                     </div>
                     <div class="form-group">
                         {{ form_label(form.plainPassword.first, 'Mot de passe *') }}

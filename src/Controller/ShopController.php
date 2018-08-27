@@ -105,7 +105,7 @@ class ShopController extends AbstractController
     public function productPage(Request $request, Security $security, EntityManipulation $entityManipulation, string $reference): ?Response
     {
         $customer = $security->getUser();
-        $product = $this->findOneByReference($reference);
+        $product = $this->findOneProductByReference($reference);
         $shoppingCartProduct = new ShoppingCartProduct();
         $form = $this->createForm(ShoppingCartProductType::class, $shoppingCartProduct);
         $form->handleRequest($request);
@@ -142,7 +142,7 @@ class ShopController extends AbstractController
      *
      * @return Product|null|object
      */
-    private function findOneByReference(string $reference): ?Product
+    private function findOneProductByReference(string $reference): ?Product
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
         $result = $repository->findOneBy(array(

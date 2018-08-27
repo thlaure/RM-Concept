@@ -109,7 +109,7 @@ class CommandController extends AbstractController
      */
     private function generateReference(\DateTime $date, Customer $customer): ?string
     {
-        return 'C' . $date->format('ym') . $customer->getReference() . rand(10, 99);
+        return 'C' . $date->format('ymd') . $customer->getReference() . rand(10, 99);
     }
 
     /**

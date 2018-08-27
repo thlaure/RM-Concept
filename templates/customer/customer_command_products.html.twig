@@ -1,0 +1,50 @@
+{% extends 'navbar_admin.html.twig' %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store pb-5 mb-5 pt-4">
+        <div class="container">
+            <section>
+                <h1 class="display-4 text-center mb-4">Commande {{ command.reference }}</h1>
+                <article class="rounded-0 shadow-sm w-50 mx-auto mb-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Client : {{ command.customer.name|upper }} {{ command.customer.firstName }}</li>
+                        <li class="list-group-item">Date : {{ command.date|date('d/m/Y') }}</li>
+                        {% if command.deliveryComplementAddress != null %}
+                            <li class="list-group-item">Adresse de livraison : {{ command.deliveryAddress }} - {{ command.deliveryComplementAddress }}</li>
+                        {% else %}
+                            <li class="list-group-item">Adresse de livraison : {{ command.deliveryAddress }}</li>
+                        {% endif %}
+                        <li class="list-group-item">Ville de livraison : {{ command.deliveryCity }} ({{ command.deliveryPostalCode }})</li>
+                        <li class="list-group-item">Transporteur : {{ command.haulier.name }} ({{ command.haulier.price }} €)</li>
+                        <li class="list-group-item">Prix total : {{ command.totalPrice|number_format(2, ',', ' ') }} €</li>
+                    </ul>
+                </article>
+                <article>
+                    <ul class="list-group rounded-0 shadow-sm">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="w-25 text-center">Image</div>
+                                <div class="w-20 text-center">Nom</div>
+                                <div class="w-15 text-center">Quantité</div>
+                                <div class="w-20 text-center">Prix unitaire</div>
+                                <div class="w-20 text-center">Prix</div>
+                            </div>
+                        </li>
+                        {% for shopping_cart_product in shopping_cart_products %}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="w-25 text-center"><img class="w-25" src="{{ asset('images/balls/') ~ shopping_cart_product.product.image }}" alt="Image non chargée."/></div>
+                                    <div class="w-20 text-center">{{ shopping_cart_product.product.name }}</div>
+                                    <div class="w-15 text-center">{{ shopping_cart_product.quantity }}</div>
+                                    <div class="w-20 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', ' ') }} €</div>
+                                    <div class="w-20 text-center">{{ (shopping_cart_product.product.priceIndividuals * shopping_cart_product.quantity)|number_format(2, ',', ' ') }} €</div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}
