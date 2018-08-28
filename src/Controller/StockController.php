@@ -11,6 +11,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class StockController.
+ *
+ * @category Symfony4
+ * @package App\Controller
+ * @author   Display Name <thomaslaure3@gmail.com>
+ * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
+ * @link     https://symfony.com/
+ */
 class StockController extends AbstractController
 {
     /**

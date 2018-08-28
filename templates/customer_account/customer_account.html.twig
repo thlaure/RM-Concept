@@ -1,0 +1,58 @@
+{% extends 'navbar_store.html.twig' %}
+
+{% block title %}{{ parent() }} - Compte client{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store pb-5 mb-5 pt-4">
+        <div class="container">
+            <section>
+                <h1 class="display-4 text-center mb-4">Mon compte client</h1>
+                <article class="mb-4 w-50">
+                    <h4>Mes informations</h4>
+                    <div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="fas fa-user-alt"></i> {{ customer.name|upper }} {{ customer.firstname }}</li>
+                            <li class="list-group-item"><i class="fas fa-envelope"></i> {{ customer.username }}</li>
+                            <li class="list-group-item"><i class="fas fa-phone"></i> {{ customer.phoneNumber }}</li>
+                            {% if customer.addressComplement != null %}
+                                <li class="list-group-item"><i class="fas fa-home"></i> {{ customer.address }} - {{ customer.addressComplement }}</li>
+                            {% else %}
+                                <li class="list-group-item"><i class="fas fa-home"></i> {{ customer.address }}</li>
+                            {% endif %}
+                            <li class="list-group-item"><i class="fas fa-building"></i> {{ customer.city }} ({{ customer.postalCode }})</li>
+                        </ul>
+                    </div>
+                </article>
+                <article>
+                    <h4>Mes commandes</h4>
+                    <div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="w-20 text-center">Référence</div>
+                                    <div class="w-15 text-center">Date</div>
+                                    <div class="w-15 text-center">Quantité de produits</div>
+                                    <div class="w-20 text-center">Transporteur</div>
+                                    <div class="w-15 text-center">Prix total</div>
+                                </div>
+                            </li>
+                            {% for command in commands %}
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="w-20 text-center">{{ command.reference }}</div>
+                                        <div class="w-15 text-center">{{ command.date|date('d/m/Y') }}</div>
+                                        <div class="w-15 text-center">{{ command.shoppingCart.productQuantity }}</div>
+                                        <div class="w-20 text-center">{{ command.haulier.name }}</div>
+                                        <div class="w-15 text-center">{{ command.shoppingCart.totalPrice }}</div>
+                                        <div class="w-15 text-center"><a href="{{ path('customer_account_command', {'reference': command.reference}) }}" class="btn btn-info rounded-0"><i class="fas fa-search"></i></a></div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}
