@@ -69,7 +69,7 @@ class CommandController extends AbstractController
                 $entityManipulation->persistObject($command);
                 return $this->render('command/command_detail.html.twig', array(
                     'command' => $command,
-                    'shopping_cart_products' => $entityManipulation->findAllProductsInCart($shoppingCart)
+                    'shopping_cart_products' => $entityManipulation->findProductsByCart($shoppingCart)
                 ));
             } else {
                 return $this->render('command/command.html.twig', array(

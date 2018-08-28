@@ -119,7 +119,7 @@ class ShopController extends AbstractController
                     $shoppingCartProduct->setProduct($product);
                     $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $quantity);
                     $entityManipulation->persistObject($shoppingCartProduct);
-                    $shoppingCart->setProductQuantity(count($entityManipulation->findAllProductsInCart($shoppingCart)));
+                    $shoppingCart->setProductQuantity(count($entityManipulation->findProductsByCart($shoppingCart)));
                     $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
                     $entityManipulation->persistObject($shoppingCart);
                     return $this->returnRender($form, $product,'success');

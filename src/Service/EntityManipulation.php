@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Ball;
+use App\Entity\Product;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,12 +26,24 @@ class EntityManipulation extends AbstractController
      *
      * @return Ball[]|ShoppingCartProduct[]|object[]
      */
-    public function findAllProductsInCart(ShoppingCart $shoppingCart): array
+    public function findProductsByCart(ShoppingCart $shoppingCart): array
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
         $result = $repository->findBy(array(
             'shoppingCart' => $shoppingCart
         ));
+        return $result;
+    }
+
+    /**
+     * Renvoie un tableau de données contenant tous les produits.
+     *
+     * @return array
+     */
+    public function findAllProducts(): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
+        $result = $repository->findAll();
         return $result;
     }
 

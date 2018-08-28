@@ -31,6 +31,7 @@ class RegistrationProductController extends AbstractController
      * @Route("/registration/product", name="registration_product")
      *
      * @param Request $request
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */

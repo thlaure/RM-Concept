@@ -85,7 +85,7 @@ class SecurityController extends AbstractController
      */
     private function removeAllShoppingCartProducts(ShoppingCart $shoppingCart, EntityManipulation $entityManipulation): void
     {
-        $shoppingCartsProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
+        $shoppingCartsProducts = $entityManipulation->findProductsByCart($shoppingCart);
         foreach ($shoppingCartsProducts as $shoppingCartProduct) {
             $entityManipulation->removeObject($shoppingCartProduct);
         }

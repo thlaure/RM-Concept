@@ -36,7 +36,7 @@ class ShoppingCartController extends AbstractController
     {
         $customer = $security->getUser();
         $shoppingCart = $customer->getShoppingCartNotConfirmed();
-        $shoppingCartsProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
+        $shoppingCartsProducts = $entityManipulation->findProductsByCart($shoppingCart);
         $totalPrice = $this->calculateTotalPrice($shoppingCart, $entityManipulation);
         $shoppingCart->setTotalPrice($totalPrice);
         $entityManipulation->persistObject($shoppingCart);
@@ -64,7 +64,7 @@ class ShoppingCartController extends AbstractController
         $entityManipulation->removeObject($shoppingCartProduct);
         $customer = $security->getUser();
         $shoppingCart = $customer->getShoppingCartNotConfirmed();
-        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
+        $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCart);
         $shoppingCart->setProductQuantity(count($shoppingCartProducts));
         $totalPrice = $this->calculateTotalPrice($shoppingCart, $entityManipulation);
         $shoppingCart->setTotalPrice($totalPrice);
@@ -118,7 +118,7 @@ class ShoppingCartController extends AbstractController
     private function calculateTotalPrice(ShoppingCart $shoppingCart, EntityManipulation $entityManipulation): ?float
     {
         $totalPrice = 0;
-        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCart);
+        $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCart);
         foreach ($shoppingCartProducts as $shoppingCartProduct) {
             $totalPrice += $shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity();
         }

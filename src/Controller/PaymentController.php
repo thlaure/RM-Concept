@@ -90,7 +90,7 @@ class PaymentController extends AbstractController
      */
     private function changeShoppingCart(ShoppingCartNotConfirmed $shoppingCartNotConfirmed, ShoppingCartConfirmed $shoppingCartConfirmed, EntityManipulation $entityManipulation): void
     {
-        $shoppingCartProducts = $entityManipulation->findAllProductsInCart($shoppingCartNotConfirmed);
+        $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCartNotConfirmed);
         foreach ($shoppingCartProducts as $shoppingCartProduct) {
             $shoppingCartProduct->setShoppingCart($shoppingCartConfirmed);
         }
