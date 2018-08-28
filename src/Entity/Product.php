@@ -263,6 +263,7 @@ abstract class Product
         return $this;
     }
 
+
     /**
      * Accesseur du prix du produit pour les professionnels.
      *

@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
- * @ORM\DiscriminatorMap({"client" = "Customer", "particulier" = "Individual"})
+ * @ORM\DiscriminatorMap({"particulier" = "Individual"})
  *
  * @category Symfony4
  * @package  App\Entity
@@ -135,7 +135,7 @@ abstract class Customer implements UserInterface, \Serializable
     /**
      * Panier non confirmé du client.
      *
-     * @ORM\OneToOne(targetEntity="App\Entity\ShoppingCartNotConfirmed", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\ShoppingCart", cascade={"persist", "remove"})
      */
     private $shoppingCartNotConfirmed;
 
@@ -613,9 +613,9 @@ abstract class Customer implements UserInterface, \Serializable
     /**
      * Accesseur du panier non confirmé du client.
      *
-     * @return ShoppingCartNotConfirmed|null
+     * @return ShoppingCart|null
      */
-    public function getShoppingCartNotConfirmed(): ?ShoppingCartNotConfirmed
+    public function getShoppingCartNotConfirmed(): ?ShoppingCart
     {
         return $this->shoppingCartNotConfirmed;
     }
@@ -623,11 +623,11 @@ abstract class Customer implements UserInterface, \Serializable
     /**
      * Mutateur du panier non confirmé du client.
      *
-     * @param ShoppingCartNotConfirmed|null $shoppingCartNotConfirmed Panier non confirmé à attribuer au client.
+     * @param ShoppingCart|null $shoppingCartNotConfirmed Panier non confirmé à attribuer au client.
      *
      * @return Customer
      */
-    public function setShoppingCartNotConfirmed(?ShoppingCartNotConfirmed $shoppingCartNotConfirmed): self
+    public function setShoppingCartNotConfirmed(?ShoppingCart $shoppingCartNotConfirmed): self
     {
         $this->shoppingCartNotConfirmed = $shoppingCartNotConfirmed;
 

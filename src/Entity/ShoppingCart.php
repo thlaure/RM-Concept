@@ -10,9 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
  * Class ShoppingCart.
  *
  * @ORM\Entity(repositoryClass="App\Repository\ShoppingCartRepository")
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="confirmed", type="string")
- * @ORM\DiscriminatorMap({"confirmed" = "ShoppingCartConfirmed", "notConfirmed" = "ShoppingCartNotConfirmed"})
  *
  * @category Symfony4
  * @package  App\Entity
@@ -20,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
  * @link     https://symfony.com/
  */
-abstract class ShoppingCart
+class ShoppingCart
 {
     /**
      * ID du panier.
@@ -59,13 +56,6 @@ abstract class ShoppingCart
      *
      */
     private $customer;
-
-    /**
-     * Etat de sauvegarde du panier.
-     *
-     * @ORM\Column(type="boolean")
-     */
-    private $isSaved;
 
     /**
      * Commande liée au panier.
@@ -152,30 +142,6 @@ abstract class ShoppingCart
     public function setIsConfirmed(bool $isConfirmed): self
     {
         $this->isConfirmed = $isConfirmed;
-
-        return $this;
-    }
-
-    /**
-     * Accesseur de l'état de sauvegarde du panier.
-     *
-     * @return bool|null
-     */
-    public function getIsSaved(): ?bool
-    {
-        return $this->isSaved;
-    }
-
-    /**
-     * Mutateur de l'état de sauvegarde du panier.
-     *
-     * @param bool $isSaved Etat de sauvegarde à attribuer au panier.
-     *
-     * @return ShoppingCart
-     */
-    public function setIsSaved(bool $isSaved): self
-    {
-        $this->isSaved = $isSaved;
 
         return $this;
     }

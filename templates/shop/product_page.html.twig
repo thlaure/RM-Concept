@@ -15,7 +15,12 @@
                         <img class="w-100" src="{{ asset('images/balls/' ~ product.image) }}">
                     </article>
                     <article class="col-md-8">
-                        <h4 class="font-weight-bold">{{ product.name }} - les 3 balles</h4>
+                        <h4 class="font-weight-bold">{{ product.name }}</h4>
+                        {% if product.numberInPack == 3 %}
+                            <h5 class="font-weight-bold">3 balles</h5>
+                        {% else %}
+                            <h5 class="font-weight-bold">12 balles</h5>
+                        {% endif %}
                         <p class="lead font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
                         {{ form_start(form) }}
                         <div class="form-group">
@@ -29,9 +34,6 @@
                         </div>
                         <button type="submit" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
                         {{ form_end(form) }}
-                        <div class="row p-3">
-                            <p class="lead font-weight-bold">Vendu par pack de 3 balles.</p>
-                        </div>
                     </article>
                 </div>
                 <div class="row p-3">

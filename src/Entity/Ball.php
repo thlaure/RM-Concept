@@ -18,33 +18,32 @@ use Doctrine\ORM\Mapping as ORM;
 class Ball extends Product
 {
     /**
-     * Couleur de la balle.
+     * Nombre de balles par pack.
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Color")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer")
      */
-    private $color;
+    private $numberInPack;
 
     /**
-     * Accesseur de la couleur de la balle.
+     * Accesseur du nombre de balles par pack.
      *
-     * @return Color|null
+     * @return null|int
      */
-    public function getColor(): ?Color
+    public function getNumberInPack(): ?int
     {
-        return $this->color;
+        return $this->numberInPack;
     }
 
     /**
-     * Mutateur de la couleur de la balle.
+     * Mutateur du nombre de balles par pack.
      *
-     * @param Color|null $color Couleur à attribuer à la balle.
+     * @param string $numberInPack Nombre de balles à attribuer.
      *
      * @return Ball
      */
-    public function setColor(?Color $color): self
+    public function setNumberInPack(string $numberInPack): self
     {
-        $this->color = $color;
+        $this->numberInPack = $numberInPack;
 
         return $this;
     }

@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Command;
-use App\Entity\Customer;
 use App\Entity\ShoppingCartProduct;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,13 +27,14 @@ class CustomerAccountController extends AbstractController
      * @Route("/customer/account", name="customer_account")
      *
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */
-    public function account(Security $security): ?Response
+    public function account(Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
-        $commands = $this->findCommandsByCustomer($customer);
+        $commands = $entityManipulation->findCommandsByCustomer($customer);
         return $this->render('customer_account/customer_account.html.twig', array(
             'customer' => $customer,
             'commands' => $commands
@@ -46,50 +47,18 @@ class CustomerAccountController extends AbstractController
      * @Route("/customer/account/command/{reference}", name="customer_account_command")
      *
      * @param string $reference Référence de la commande dont on veut afficher le détail.
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */
-    public function customerCommand(string $reference): ?Response
+    public function customerCommand(string $reference, EntityManipulation $entityManipulation): ?Response
     {
-        $command = $this->findOneCommandByReference($reference);
+        $command = $entityManipulation->findOneCommandByReference($reference);
         $shoppingCartProducts = $this->findShoppingCartProductsByCommand($command);
         return $this->render('customer_account/customer_command_products.html.twig', array(
             'shopping_cart_products' => $shoppingCartProducts,
             'command' => $command
         ));
-    }
-
-    /**
-     * Renvoie un tableau de données contenant les commandes du client passé en paramètre.
-     *
-     * @param Customer $customer Client dont on veut récupérer les commandes.
-     *
-     * @return array
-     */
-    private function findCommandsByCustomer(Customer $customer): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
-        $result = $repository->findBy(array(
-            'customer' => $customer,
-            'isPaid' => true
-        ));
-        return $result;
-    }
-
-    /**
-     * Renvoie la commande dont la référence est passée en paramètre.
-     *
-     * @param string $reference Référence de la commande à extraire.
-     *
-     * @return Command|null
-     */
-    private function findOneCommandByReference(string $reference): ?Command
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
-        $result = $repository->findOneBy(array(
-            'reference' => $reference
-        ));
-        return $result;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Ball;
+use App\Entity\Command;
+use App\Entity\Customer;
 use App\Entity\Product;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
@@ -31,6 +33,56 @@ class EntityManipulation extends AbstractController
         $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
         $result = $repository->findBy(array(
             'shoppingCart' => $shoppingCart
+        ));
+        return $result;
+    }
+
+    /**
+     * Instancie la classe ShoppingCart.
+     *
+     * @param Customer $customer Client à qui appartient le panier.
+     *
+     * @return ShoppingCart
+     */
+    public function createShoppingCart(Customer $customer): ?ShoppingCart
+    {
+        $shoppingCart = new ShoppingCart();
+        $shoppingCart->setCustomer($customer);
+        $shoppingCart->setProductQuantity(0);
+        $shoppingCart->setIsConfirmed(false);
+        $shoppingCart->setTotalPrice(0);
+        return $shoppingCart;
+    }
+
+    /**
+     * Renvoie un tableau de données contenant les commandes du client passé en paramètre.
+     *
+     * @param Customer $customer Client dont on veut récupérer les commandes.
+     *
+     * @return array
+     */
+    public function findCommandsByCustomer(Customer $customer): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
+        $result = $repository->findBy(array(
+            'customer' => $customer,
+            'isPaid' => true
+        ));
+        return $result;
+    }
+
+    /**
+     * Renvoie la commande dont la référence est passée en paramètre.
+     *
+     * @param string $reference Référence de la commande à extraire.
+     *
+     * @return Command|null
+     */
+    public function findOneCommandByReference(string $reference): ?Command
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
+        $result = $repository->findOneBy(array(
+            'reference' => $reference
         ));
         return $result;
     }

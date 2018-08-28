@@ -1,6 +1,6 @@
 {% extends 'navbar_store.html.twig' %}
 
-{% block title %}{{ parent() }} - Balles personnalisables{% endblock %}
+{% block title %}{{ parent() }} - Magasin{% endblock %}
 
 {% block body %}
     {{ parent() }}
@@ -23,7 +23,12 @@
                                         </a>
                                     </div>
                                     <div class="card-body p-0">
-                                        <h5 class="card-title text-center">{{ product.name }}</h5>
+                                        <h5 class="card-title text-center mb-0">{{ product.name }}</h5>
+                                        {% if product.numberInPack == 3 %}
+                                            <h5 class="card-title text-center">3 balles</h5>
+                                        {% else %}
+                                            <h5 class="card-title text-center">12 balles</h5>
+                                        {% endif %}
                                         {% if individual is defined %}
                                             <p class="card-text text-center font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
                                         {% else %}

@@ -2,8 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Product;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Ball;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -22,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
  * @link     https://symfony.com/
  */
-class ProductType extends AbstractType
+class BallType extends AbstractType
 {
     /**
      * Crée le formulaire permettant d'enregistrer des produits.
@@ -46,14 +45,9 @@ class ProductType extends AbstractType
                 'multiple' => false
             ))
             ->add('quantity', NumberType::class)
+            ->add('number_in_pack', NumberType::class)
             ->add('price_individuals', NumberType::class)
-            ->add('price_professionals', NumberType::class)
-            ->add('color', EntityType::class, array(
-                'class' => 'App\Entity\Color',
-                'multiple' => false,
-                'choice_label' => 'name',
-                'placeholder' => 'Sélectionnez la couleur'
-            ));
+            ->add('price_professionals', NumberType::class);
     }
 
     /**
@@ -61,6 +55,6 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(array('data_class' => Product::class));
+        $resolver->setDefaults(array('data_class' => Ball::class));
     }
 }

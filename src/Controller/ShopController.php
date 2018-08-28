@@ -6,7 +6,6 @@ use App\Entity\Ball;
 use App\Entity\Customer;
 use App\Entity\Product;
 use App\Entity\ShoppingCart;
-use App\Entity\ShoppingCartNotConfirmed;
 use App\Entity\ShoppingCartProduct;
 use App\Form\ShoppingCartProductType;
 use App\Service\EntityManipulation;
@@ -42,13 +41,13 @@ class ShopController extends AbstractController
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            if ($customer->getShoppingCartNotConfirmed() === null) {
-                $shoppingCart = $this->createShoppingCart($customer);
-                $entityManipulation->persistObject($shoppingCart);
+            $shoppingCartNotConfirmed = $customer->getShoppingCartNotConfirmed();
+            if ($shoppingCartNotConfirmed === null) {
+                $shoppingCart = $entityManipulation->createShoppingCart($customer);
                 $customer->setShoppingCartNotConfirmed($shoppingCart);
-                $entityManipulation->persistObject($customer);
+                $entityManipulation->persistObject($shoppingCart);
             } else {
-                $shoppingCart = $customer->getShoppingCartNotConfirmed();
+                $shoppingCart = $shoppingCartNotConfirmed;
             }
             return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
@@ -77,11 +76,10 @@ class ShopController extends AbstractController
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $shoppingCart = $customer->getShoppingCartNotConfirmed();
             return $this->render('shop/balls.html.twig', [
                 'products' => $this->findAllBalls(),
                 'customer' => $customer,
-                'shopping_cart' => $shoppingCart
+                'shopping_cart' => $customer->getShoppingCartNotConfirmed()
             ]);
         }
         return $this->render('shop/balls.html.twig', [
@@ -161,24 +159,6 @@ class ShopController extends AbstractController
         $repository = $this->getDoctrine()->getManager()->getRepository(Ball::class);
         $result = $repository->findAll();
         return $result;
-    }
-
-    /**
-     * Instancie la classe ShoppingCart.
-     *
-     * @param Customer $customer Client à qui appartient le panier.
-     *
-     * @return ShoppingCart
-     */
-    private function createShoppingCart(Customer $customer): ?ShoppingCart
-    {
-        $shoppingCart = new ShoppingCartNotConfirmed();
-        $shoppingCart->setCustomer($customer);
-        $shoppingCart->setProductQuantity(0);
-        $shoppingCart->setIsConfirmed(false);
-        $shoppingCart->setTotalPrice(0);
-        $shoppingCart->setIsSaved(false);
-        return $shoppingCart;
     }
 
     /**

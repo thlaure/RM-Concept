@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\ShoppingCartConfirmed;
-use App\Entity\ShoppingCartNotConfirmed;
+use App\Entity\Command;
+use App\Entity\ShoppingCart;
 use App\Form\PaymentType;
 use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,61 +38,54 @@ class PaymentController extends AbstractController
     {
         $customer = $security->getUser();
         $shoppingCart = $customer->getShoppingCartNotConfirmed();
-        $command = $shoppingCart->getCommand();
-        $totalPrice = $command->getTotalPrice();
-        $form = $this->createForm(PaymentType::class, $command);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $command->setPaymentMethod($command->getPaymentMethod());
-            $command->setIsPaid(true);
-            $shoppingCartConfirmed = $this->createShoppingCartConfirmed($shoppingCart);
-            $command->setShoppingCart($shoppingCartConfirmed);
-            $entityManipulation->persistObject($shoppingCartConfirmed);
-            $entityManipulation->persistObject($command);
-            $this->changeShoppingCart($shoppingCart, $shoppingCartConfirmed, $entityManipulation);
-            $entityManipulation->resetShoppingCart($shoppingCart);
-            return $this->render('payment/payment_confirmation.html.twig', array(
-                'class_alert' => 'alert-success',
-                'text_alert' => 'Paiement effectué.'
+        if ($shoppingCart->getCommand() !== null) {
+            $command = $shoppingCart->getCommand();
+            $totalPrice = $command->getTotalPrice();
+            $form = $this->createForm(PaymentType::class, $command);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                if (!$this->checkCommandExistenceInShoppingCarts($command)) {
+                    $command->setPaymentMethod($command->getPaymentMethod());
+                    $command->setIsPaid(true);
+                    $command->setShoppingCart($shoppingCart);
+                    $shoppingCart->setIsConfirmed(true);
+                    $entityManipulation->persistObject($shoppingCart);
+                    $entityManipulation->persistObject($command);
+                    $shoppingCart = $entityManipulation->createShoppingCart($customer);
+                    $customer->setShoppingCartNotConfirmed($shoppingCart);
+                    $entityManipulation->persistObject($shoppingCart);
+                    $entityManipulation->persistObject($customer);
+                    return $this->render('payment/payment_confirmation.html.twig', array(
+                        'class_alert' => 'alert-success',
+                        'text_alert' => 'Paiement effectué.'
+                    ));
+                } else {
+                    return $this->render('payment/payment_confirmation.html.twig');
+                }
+            }
+            return $this->render('payment/payment.html.twig', array(
+                'form' => $form->createView(),
+                'total_price' => $totalPrice
             ));
+        } else {
+            return $this->render('payment/payment_confirmation.html.twig');
         }
-        return $this->render('payment/payment.html.twig', array(
-            'form' => $form->createView(),
-            'total_price' => $totalPrice
+    }
+
+    /**
+     * Vérifier l'association d'une commande aux paniers.
+     *
+     * @param Command $command Commande dont on doit vérifier l'association.
+     *
+     * @return bool
+     */
+    private function checkCommandExistenceInShoppingCarts(Command $command): bool
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCart::class);
+        $result = $repository->findOneBy(array(
+            'command' => $command,
+            'isConfirmed' => true
         ));
-    }
-
-    /**
-     * Instancie la classe ShoppingCartConfirmed à partir du panier passé en paramètre.
-     *
-     * @param ShoppingCartNotConfirmed $shoppingCart
-     *
-     * @return null|ShoppingCartConfirmed
-     */
-    private function createShoppingCartConfirmed(ShoppingCartNotConfirmed $shoppingCart): ?ShoppingCartConfirmed
-    {
-        $shoppingCartConfirmed = new ShoppingCartConfirmed();
-        $shoppingCartConfirmed->setCustomer($shoppingCart->getCustomer());
-        $shoppingCartConfirmed->setTotalPrice($shoppingCart->getTotalPrice());
-        $shoppingCartConfirmed->setProductQuantity($shoppingCart->getProductQuantity());
-        $shoppingCartConfirmed->setIsConfirmed(true);
-        $shoppingCartConfirmed->setCommand($shoppingCart->getCommand());
-        $shoppingCartConfirmed->setIsSaved(false);
-        return $shoppingCartConfirmed;
-    }
-
-    /**
-     * Envoie les produits du panier non confirmé dans le panier confirmé.
-     *
-     * @param ShoppingCartNotConfirmed $shoppingCartNotConfirmed Panier d'où viennent les produits.
-     * @param ShoppingCartConfirmed $shoppingCartConfirmed Panier où vont les produits.
-     * @param EntityManipulation $entityManipulation
-     */
-    private function changeShoppingCart(ShoppingCartNotConfirmed $shoppingCartNotConfirmed, ShoppingCartConfirmed $shoppingCartConfirmed, EntityManipulation $entityManipulation): void
-    {
-        $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCartNotConfirmed);
-        foreach ($shoppingCartProducts as $shoppingCartProduct) {
-            $shoppingCartProduct->setShoppingCart($shoppingCartConfirmed);
-        }
+        return $result !== null;
     }
 }

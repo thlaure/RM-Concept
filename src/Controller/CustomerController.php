@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Command;
 use App\Entity\Customer;
 use App\Entity\ShoppingCartProduct;
+use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,13 +42,14 @@ class CustomerController extends AbstractController
      * @Route("/admin/customer/{reference}/commands", name="customer_commands")
      *
      * @param string $reference
+     * @param EntityManipulation $entityManipulation
      *
      * @return Response
      */
-    public function customerCommands(string $reference): ?Response
+    public function customerCommands(string $reference, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $this->findOneCustomerByReference($reference);
-        $commands = $this->findCommandsByCustomer($customer);
+        $commands = $entityManipulation->findCommandsByCustomer($customer);
         return $this->render('customer/customer_commands.html.twig', array(
             'commands' => $commands
         ));
@@ -59,12 +61,13 @@ class CustomerController extends AbstractController
      * @Route("/admin/customer/command/{reference}", name="command_products")
      *
      * @param string $reference Référence de la commande.
+     * @param EntityManipulation $entityManipulation
      *
      * @return null|Response
      */
-    public function commandProducts(string $reference): ?Response
+    public function commandProducts(string $reference, EntityManipulation $entityManipulation): ?Response
     {
-        $command = $this->findOneCommandByReference($reference);
+        $command = $entityManipulation->findOneCommandByReference($reference);
         $shoppingCartProducts = $this->findShoppingCartProductsByCommand($command);
         return $this->render('customer/customer_command_products.html.twig', array(
             'shopping_cart_products' => $shoppingCartProducts,
@@ -81,23 +84,6 @@ class CustomerController extends AbstractController
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(Customer::class);
         $result = $repository->findAll();
-        return $result;
-    }
-
-    /**
-     * Renvoie un tableau de données contenant toutes les commandes payées du client passé en paramètre.
-     *
-     * @param Customer $customer Client à qui appartiennent les commandes.
-     *
-     * @return array
-     */
-    private function findCommandsByCustomer(Customer $customer): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
-        $result = $repository->findBy(array(
-            'customer' => $customer,
-            'isPaid' => true
-        ));
         return $result;
     }
 
@@ -130,22 +116,6 @@ class CustomerController extends AbstractController
         $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
         $result = $repository->findBy(array(
             'shoppingCart' => $shoppingCart
-        ));
-        return $result;
-    }
-
-    /**
-     * Renvoie la commande dont la référence est passée en paramètre.
-     *
-     * @param string $reference Référence de la commande à extraire.
-     *
-     * @return Command|null
-     */
-    private function findOneCommandByReference(string $reference): ?Command
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Command::class);
-        $result = $repository->findOneBy(array(
-            'reference' => $reference
         ));
         return $result;
     }

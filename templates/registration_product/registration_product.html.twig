@@ -9,75 +9,53 @@
             {% if text_alert is defined and class_alert is defined %}
                 <div class="alert {{ class_alert }} rounded-0 text-center" role="alert">{{ text_alert }}</div>
             {% endif %}
-            <div class="row">
-                <div class="col-lg-6 mt-4">
-                    <section class="border p-3 shadow-sm">
-                        <h1 class="display-4 text-center mb-2">Enregistrement de produits</h1>
-                        <article>
-                            {{ form_start(form_product) }}
-                            <div class="form-group">
-                                {{ form_label(form_product.name, 'Nom du produit') }}
-                                {{ form_widget(form_product.name, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.reference, 'Référence') }}
-                                {{ form_widget(form_product.reference, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.description, '') }}
-                                {{ form_widget(form_product.description, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.image, '') }}
-                                {{ form_widget(form_product.image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.color, 'Couleur') }}
-                                {{ form_widget(form_product.color, {'attr': {'class': 'custom-select rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.is_new, 'Est-ce une nouveauté ?') }}
-                                {{ form_widget(form_product.is_new, {'attr': {'class': 'custom-select rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.quantity, 'Quantité disponible') }}
-                                {{ form_widget(form_product.quantity, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.price_individuals, 'Prix pour particuliers') }}
-                                {{ form_widget(form_product.price_individuals, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_product.price_professionals, 'Prix pour professionnels') }}
-                                {{ form_widget(form_product.price_professionals, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
-                            </div>
-                            {{ form_end(form_product) }}
-                        </article>
-                    </section>
-                </div>
-                <div class="col-lg-6 mt-4">
-                    <section class="border p-3 shadow-sm">
-                        <h1 class="display-4 text-center mb-2">Création de couleurs</h1>
-                        <article>
-                            {{ form_start(form_color) }}
-                            <div class="form-group">
-                                {{ form_label(form_color.name, 'Nom de la couleur') }}
-                                {{ form_widget(form_color.name, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="form-group">
-                                {{ form_label(form_color.color_code, 'Code couleur') }}
-                                {{ form_widget(form_color.color_code, {'attr': {'class': 'form-control rounded-0'}}) }}
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary rounded-0 m-auto">Enregistrer</button>
-                            </div>
-                            {{ form_end(form_color) }}
-                        </article>
-                    </section>
-                </div>
+            <div class="mt-4">
+                <section class="border p-3 shadow-sm">
+                    <h1 class="display-4 text-center mb-2">Enregistrement de produits</h1>
+                    <article class="w-50 mx-auto">
+                        {{ form_start(form) }}
+                        <div class="form-group">
+                            {{ form_label(form.name, 'Nom du produit') }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.reference, 'Référence') }}
+                            {{ form_widget(form.reference, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.description, '') }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.image, '') }}
+                            {{ form_widget(form.image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.is_new, 'Est-ce une nouveauté ?') }}
+                            {{ form_widget(form.is_new, {'attr': {'class': 'custom-select rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.quantity, 'Quantité disponible') }}
+                            {{ form_widget(form.quantity, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.number_in_pack, 'Nombre de balles par pack') }}
+                            {{ form_widget(form.number_in_pack, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.price_individuals, 'Prix pour particuliers') }}
+                            {{ form_widget(form.price_individuals, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.price_professionals, 'Prix pour professionnels') }}
+                            {{ form_widget(form.price_professionals, {'attr': {'class': 'form-control rounded-0'}}) }}
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary rounded-0">Enregistrer</button>
+                        </div>
+                        {{ form_end(form) }}
+                    </article>
+                </section>
             </div>
         </div>
     </div>

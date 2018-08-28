@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ball;
-use App\Entity\Color;
-use App\Form\ColorType;
-use App\Form\ProductType;
+use App\Form\BallType;
 use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -38,40 +36,27 @@ class RegistrationProductController extends AbstractController
     public function register(Request $request, EntityManipulation $entityManipulation): ?Response
     {
         $ball = new Ball();
-        $color = new Color();
-        $formProduct = $this->createForm(ProductType::class, $ball);
-        $formColor = $this->createForm(ColorType::class, $color);
-        $formProduct->handleRequest($request);
-        $formColor->handleRequest($request);
-        if ($formProduct->isSubmitted() && $formProduct->isValid()) {
-            $image = $formProduct['image']->getData();
-            $quantity = $formProduct['quantity']->getData();
-            $reference = $formProduct['reference']->getData();
+        $form = $this->createForm(BallType::class, $ball);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $image = $form['image']->getData();
+            $quantity = $form['quantity']->getData();
+            $reference = $form['reference']->getData();
             $referenceExists = $this->checkReferenceExistence($reference);
             if ($this->testImageFormat($image) && $quantity > 0 && !$referenceExists) {
                 $ball->setName(ucwords(strtolower($ball->getName())));
                 $ball->setImage($this->imageProcessing($image));
                 $entityManipulation->persistObject($ball);
-                return $this->returnRender($formProduct, $formColor, 'goodProduct');
+                return $this->returnRender($form, 'goodProduct');
             } elseif ($quantity <= 0) {
-                return $this->returnRender($formProduct, $formColor, 'quantity');
+                return $this->returnRender($form, 'quantity');
             } elseif ($referenceExists) {
-                return $this->returnRender($formProduct, $formColor, 'reference');
+                return $this->returnRender($form, 'reference');
             } else {
-                return $this->returnRender($formProduct, $formColor, 'image');
-            }
-        } elseif ($formColor->isSubmitted() && $formColor->isValid()) {
-            $name = ucwords($formColor['name']->getData());
-            $color->setName($name);
-            $colorExists = $this->checkColorExistence($name, $formColor['color_code']->getData());
-            if (!$colorExists) {
-                $entityManipulation->persistObject($color);
-                return $this->returnRender($formProduct, $formColor, 'goodColor');
-            } else {
-                return $this->returnRender($formProduct, $formColor, 'color');
+                return $this->returnRender($form, 'image');
             }
         }
-        return $this->returnRender($formProduct, $formColor, '');
+        return $this->returnRender($form, '');
     }
 
     /**
@@ -133,104 +118,59 @@ class RegistrationProductController extends AbstractController
     }
 
     /**
-     * Vérifie l'existence de la couleur en base de données.
-     *
-     * @param string $name Nom de la couleur
-     * @param string $colorCode Code de la couleur
-     *
-     * @return bool
-     */
-    private function checkColorExistence(string $name, string $colorCode)
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Color::class);
-        $result = $repository->findOneBy(
-            array(
-                'name' => $name,
-                'colorCode' => $colorCode
-            )
-        );
-        return $result !== null;
-    }
-
-    /**
      * Renvoie le message approprié en fonction du besoin.
      *
-     * @param FormInterface $formProduct Formulaire de création de produits.
-     * @param FormInterface $formColor Formulaire de création de couleurs.
+     * @param FormInterface $form Formulaire de création de produits.
      * @param string $alert Alerte définie.
      *
      * @return Response
      */
-    private function returnRender(FormInterface $formProduct, FormInterface $formColor, string $alert): ?Response
+    private function returnRender(FormInterface $form, string $alert): ?Response
     {
         if ($alert === 'goodProduct') {
             $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
+                'registration_product/registration_product.html.twig', array(
+                    'form' => $form->createView(),
                     'text_alert' => 'Le produit a bien été enregistré.',
-                    'class_alert' => 'alert-success'
-                )
-            );
-        } elseif ($alert === 'goodColor') {
-            $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
-                    'text_alert' => 'La couleur a bien été enregistrée.',
                     'class_alert' => 'alert-success'
                 )
             );
         } elseif ($alert === 'reference') {
             $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
+                'registration_product/registration_product.html.twig', array(
+                    'form' => $form->createView(),
                     'text_alert' => 'La référence saisie est déjà associée à un produit.',
                     'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'name') {
             $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
+                'registration_product/registration_product.html.twig', array(
+                    'form' => $form->createView(),
                     'text_alert' => 'Le nom saisi est déjà associé à un produit.',
                     'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'quantity') {
             $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
+                'registration_product/registration_product.html.twig', array(
+                    'form' => $form->createView(),
                     'text_alert' => 'La quantité disponible saisie doit être supérieure à zéro.',
                     'class_alert' => 'alert-warning'
                 )
             );
         } elseif ($alert === 'image') {
             $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
-                    'text_alert' => 'L\'image importée doit être une image.',
-                    'class_alert' => 'alert-warning'
-                )
-            );
-        } elseif ($alert === 'color') {
-            $render = $this->render(
                 'registration_product/registration_product.html.twig', array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView(),
-                    'text_alert' => 'La couleur a déjà été enregistrée.',
+                    'form' => $form->createView(),
+                    'text_alert' => 'L\'image importée doit être une image.',
                     'class_alert' => 'alert-warning'
                 )
             );
         } else {
             $render = $this->render(
-                'registration_product/registration_product.html.twig',array(
-                    'form_product' => $formProduct->createView(),
-                    'form_color' => $formColor->createView()
+                'registration_product/registration_product.html.twig', array(
+                    'form' => $form->createView()
                 )
             );
         }

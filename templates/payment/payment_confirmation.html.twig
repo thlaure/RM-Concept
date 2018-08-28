@@ -6,14 +6,19 @@
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
+            {% if class_alert is defined and text_alert is defined %}
+                <div class="alert {{ class_alert }} rounded-0 text-center">{{ text_alert }}</div>
+            {% endif %}
             <section>
-                <article>
-                    <div class="alert {{ class_alert }} rounded-0 text-center">{{ text_alert }}</div>
-                </article>
                 <article class="text-center">
-                    <a class="btn btn-primary rounded-0" href="#">Consulter vos commandes</a>
+                    <a class="btn btn-primary rounded-0" href="{{ path('customer_account') }}">Consulter vos commandes</a>
                 </article>
             </section>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/rmconcept.js') }}"></script>
 {% endblock %}
