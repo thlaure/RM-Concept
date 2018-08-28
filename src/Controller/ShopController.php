@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ball;
-use App\Entity\Customer;
 use App\Entity\Product;
-use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
 use App\Form\ShoppingCartProductType;
 use App\Service\EntityManipulation;

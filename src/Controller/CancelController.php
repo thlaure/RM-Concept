@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Command;
-use App\Entity\Customer;
 use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

@@ -49,6 +49,7 @@ class PaymentController extends AbstractController
                     $command->setIsPaid(true);
                     $command->setShoppingCart($shoppingCart);
                     $shoppingCart->setIsConfirmed(true);
+                    $this->reduceStock($shoppingCart, $entityManipulation);
                     $entityManipulation->persistObject($shoppingCart);
                     $entityManipulation->persistObject($command);
                     $shoppingCart = $entityManipulation->createShoppingCart($customer);
@@ -69,6 +70,23 @@ class PaymentController extends AbstractController
             ));
         } else {
             return $this->render('payment/payment_confirmation.html.twig');
+        }
+    }
+
+    /**
+     * Actualise les stocks des produits.
+     *
+     * @param ShoppingCart $shoppingCart Panier dont on veut récupérer les produits.
+     * @param EntityManipulation $entityManipulation
+     */
+    private function reduceStock(ShoppingCart $shoppingCart, EntityManipulation $entityManipulation): void
+    {
+        $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCart);
+        foreach ($shoppingCartProducts as $shoppingCartProduct) {
+            $product = $shoppingCartProduct->getProduct();
+            $purchasedProductQuantity = $shoppingCartProduct->getQuantity() * $product->getNumberInPack();
+            $product->setQuantity($product->getQuantity() - $purchasedProductQuantity);
+            $entityManipulation->persistObject($product);
         }
     }
 
