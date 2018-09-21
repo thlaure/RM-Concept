@@ -48,14 +48,14 @@ class ShopController extends AbstractController
                 $shoppingCart = $shoppingCartNotConfirmed;
             }
             return $this->render('shop/balls.html.twig', [
-                'products' => $this->findAllBalls(),
+                'products' => $entityManipulation->findAllBalls(),
                 'customer' => $customer,
                 'shopping_cart' => $shoppingCart,
                 'individual' => true
             ]);
         }
         return $this->render('shop/balls.html.twig', [
-            'products' => $this->findAllBalls(),
+            'products' => $entityManipulation->findAllBalls(),
             'customer' => $customer,
             'individual' => true
         ]);
@@ -67,21 +67,22 @@ class ShopController extends AbstractController
      * @Route("/shop/company-area", name="shop_company-area")
      *
      * @param Security $security
+     * @param EntityManipulation $entityManipulation
      *
      * @return null|Response
      */
-    public function companyShop(Security $security): ?Response
+    public function companyShop(Security $security, EntityManipulation $entityManipulation): ?Response
     {
         $customer = $security->getUser();
         if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->render('shop/balls.html.twig', [
-                'products' => $this->findAllBalls(),
+                'products' => $entityManipulation->findAllBalls(),
                 'customer' => $customer,
                 'shopping_cart' => $customer->getShoppingCartNotConfirmed()
             ]);
         }
         return $this->render('shop/balls.html.twig', [
-            'products' => $this->findAllBalls(),
+            'products' => $entityManipulation->findAllBalls(),
             'customer' => $customer
         ]);
     }
@@ -101,7 +102,7 @@ class ShopController extends AbstractController
     public function productPage(Request $request, Security $security, EntityManipulation $entityManipulation, string $reference): ?Response
     {
         $customer = $security->getUser();
-        $product = $this->findOneProductByReference($reference);
+        $product = $entityManipulation->findOneProductByReference($reference);
         $shoppingCartProduct = new ShoppingCartProduct();
         $form = $this->createForm(ShoppingCartProductType::class, $shoppingCartProduct);
         $form->handleRequest($request);
@@ -129,34 +130,6 @@ class ShopController extends AbstractController
             }
         }
         return $this->returnRender($form, $product, '');
-    }
-
-    /**
-     * Récupère l'objet Product dont la référence est passée en paramètre.
-     *
-     * @param string $reference Référence du produit que l'on veut récupérer.
-     *
-     * @return Product|null|object
-     */
-    private function findOneProductByReference(string $reference): ?Product
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
-        $result = $repository->findOneBy(array(
-            'reference' => $reference
-        ));
-        return $result;
-    }
-
-    /**
-     * Renvoie un tableau de données contenant toutes les balles en base de données.
-     *
-     * @return Ball[]|object[]
-     */
-    private function findAllBalls(): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Ball::class);
-        $result = $repository->findAll();
-        return $result;
     }
 
     /**

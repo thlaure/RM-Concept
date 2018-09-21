@@ -36,6 +36,7 @@ class BallType extends AbstractType
             ->add('reference', TextType::class)
             ->add('description', TextareaType::class)
             ->add('image', FileType::class)
+            ->add('image_to_customize', FileType::class)
             ->add('is_new', ChoiceType::class, array(
                 'choices' => array(
                     'Non' => false,

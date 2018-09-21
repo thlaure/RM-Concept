@@ -64,6 +64,11 @@ class ShoppingCartProduct
     private $price;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customizationImage;
+
+    /**
      * Accesseur de l'ID de la classe intermédiaire.
      *
      * @return int|null
@@ -189,6 +194,18 @@ class ShoppingCartProduct
     public function setPrice(float $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getCustomizationImage(): ?string
+    {
+        return $this->customizationImage;
+    }
+
+    public function setCustomizationImage(?string $customizationImage): self
+    {
+        $this->customizationImage = $customizationImage;
 
         return $this;
     }

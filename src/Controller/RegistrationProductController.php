@@ -5,9 +5,9 @@ namespace App\Controller;
 use App\Entity\Ball;
 use App\Form\BallType;
 use App\Service\EntityManipulation;
+use App\Service\FileManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,22 +30,25 @@ class RegistrationProductController extends AbstractController
      *
      * @param Request $request
      * @param EntityManipulation $entityManipulation
+     * @param FileManipulation $fileManipulation
      *
      * @return Response
      */
-    public function register(Request $request, EntityManipulation $entityManipulation): ?Response
+    public function register(Request $request, EntityManipulation $entityManipulation, FileManipulation $fileManipulation): ?Response
     {
         $ball = new Ball();
         $form = $this->createForm(BallType::class, $ball);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $image = $form['image']->getData();
+            $imageToCustomize = $form['image_to_customize']->getData();
             $quantity = $form['quantity']->getData();
             $reference = $form['reference']->getData();
             $referenceExists = $this->checkReferenceExistence($reference);
-            if ($this->testImageFormat($image) && $quantity > 0 && !$referenceExists) {
+            if ($fileManipulation->testImageFormat($image) && $fileManipulation->testImageFormat($imageToCustomize) && $quantity > 0 && !$referenceExists) {
                 $ball->setName(ucwords(strtolower($ball->getName())));
-                $ball->setImage($this->imageProcessing($image));
+                $ball->setImage($fileManipulation->imageProcessing($image));
+                $ball->setImageToCustomize($fileManipulation->customizableImageProcessing($imageToCustomize));
                 $entityManipulation->persistObject($ball);
                 return $this->returnRender($form, 'goodProduct');
             } elseif ($quantity <= 0) {
@@ -57,46 +60,6 @@ class RegistrationProductController extends AbstractController
             }
         }
         return $this->returnRender($form, '');
-    }
-
-    /**
-     * Vérifie le fait que le fichier importé soit bien une image.
-     *
-     * @param UploadedFile $uploadedFile Fichier importé.
-     *
-     * @return bool|null
-     */
-    private function testImageFormat(UploadedFile $uploadedFile): ?bool
-    {
-        $extensionsAllowed = array('jpg', 'jpeg', 'png', 'gif');
-        $extensionUploadedImage = $uploadedFile->guessExtension();
-        return in_array($extensionUploadedImage, $extensionsAllowed);
-    }
-
-    /**
-     * On donne un nom unique au fichier uploadé, et on le déplace dans le dossier
-     * du projet qui contiendra les images.
-     * Retourne le nouveau nom du fichier.
-     *
-     * @param UploadedFile $uploadedFile Fichier importé.
-     *
-     * @return string
-     */
-    private function imageProcessing(UploadedFile $uploadedFile): ?string
-    {
-        $imageName = $this->generateUniqueFileName() . '.' . $uploadedFile->guessExtension();
-        $uploadedFile->move($this->getParameter('balls_directory'), $imageName);
-        return $imageName;
-    }
-
-    /**
-     * Génère un nom aléatoire et complexe pour le fichier importé.
-     *
-     * @return null|string
-     */
-    private function generateUniqueFileName(): ?string
-    {
-        return md5(uniqid());
     }
 
     /**

@@ -6,6 +6,8 @@
 parameters:
     locale: 'en'
     balls_directory: '%kernel.project_dir%/public/images/balls'
+    ball_directory: '%kernel.project_dir%/public/images/ball'
+    customization_directory: '%kernel.project_dir%/public/images/customization'
 
 services:
     # default configuration for services in *this* file

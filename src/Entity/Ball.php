@@ -25,6 +25,13 @@ class Ball extends Product
     private $numberInPack;
 
     /**
+     * Image d'une seule balle. C'est l'image qui sera personnalisée.
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    private $imageToCustomize;
+
+    /**
      * Accesseur du nombre de balles par pack.
      *
      * @return null|int
@@ -44,6 +51,30 @@ class Ball extends Product
     public function setNumberInPack(string $numberInPack): self
     {
         $this->numberInPack = $numberInPack;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de l'image unitaire de la balle.
+     *
+     * @return null|string
+     */
+    public function getImageToCustomize(): ?string
+    {
+        return $this->imageToCustomize;
+    }
+
+    /**
+     * Mutateur de l'image unitaire de la balle.
+     *
+     * @param string $imageToCustomize Image unitaire à attribuer.
+     *
+     * @return Ball
+     */
+    public function setImageToCustomize(string $imageToCustomize): self
+    {
+        $this->imageToCustomize = $imageToCustomize;
 
         return $this;
     }

@@ -31,6 +31,10 @@
                             {{ form_widget(form.image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
                         </div>
                         <div class="form-group">
+                            {{ form_label(form.image_to_customize, 'Image individuelle') }}
+                            {{ form_widget(form.image_to_customize, {'attr': {'class': 'form-control-file rounded-0'}}) }}
+                        </div>
+                        <div class="form-group">
                             {{ form_label(form.is_new, 'Est-ce une nouveauté ?') }}
                             {{ form_widget(form.is_new, {'attr': {'class': 'custom-select rounded-0'}}) }}
                         </div>

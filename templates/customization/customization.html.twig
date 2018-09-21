@@ -1,30 +1,37 @@
 {% extends 'navbar_store.html.twig' %}
 
-{% block title %}{{ parent() }} - Produit{% endblock %}
+{% block title %}{{ parent() }} - Personalisation{% endblock %}
 
 {% block body %}
     {{ parent() }}
     <div class="store pb-5 mb-5 pt-4">
         <div class="container">
-            {% if text_alert is defined and class_alert is defined %}
-                <div class="alert {{ class_alert }} rounded-0 text-center">{{ text_alert }}</div>
-            {% endif %}
             <section class="mt-4">
+                <h1 class="display-4 text-center mb-5">Personnalisez vos balles</h1>
                 <div class="row">
-                    <article class="col-md-4">
-                        <img class="w-100" src="{{ asset('images/balls/' ~ product.image) }}">
+                    <article class="col-md-6">
+                        <p class="lead font-weight-bold">Taille maximale du marquage : 22 x 22 mm</p>
+                        <div class="w-75 position-absolute text-center">
+                            <img class="w-100" src="{{ asset('images/ball/' ~ product.imageToCustomize) }}">
+                        </div>
+                        <div class="w-75 position-absolute text-center">
+                            <div class="out-image align-middle">
+                                <img id="out-image" src="">
+                            </div>
+                        </div>
                     </article>
-                    <article class="col-md-8">
+                    <article class="col-md-6">
                         <h4 class="font-weight-bold">{{ product.name }}</h4>
                         {% if product.numberInPack == 3 %}
                             <h5 class="font-weight-bold">3 balles</h5>
                         {% else %}
                             <h5 class="font-weight-bold">12 balles</h5>
                         {% endif %}
-                        <p class="lead font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} €</p>
+                        <p class="lead font-weight-bold">{{ product.priceIndividuals|number_format(2, ',', '.') }} + 2,00 €</p>
                         {{ form_start(form) }}
                         <div class="form-group">
-                            <a href="{{ path('customization', { 'reference': product.reference }) }}" class="btn btn-info rounded-0"><i class="fas fa-paint-brush"></i> Personnaliser</a>
+                            {{ form_label(form.customization_image, 'Choisissez votre image') }}
+                            {{ form_widget(form.customization_image, {'attr': {'class': 'form-control-file rounded-0'}}) }}
                         </div>
                         <div class="form-group">
                             {{ form_label(form.quantity, 'Quantité') }}
@@ -34,9 +41,6 @@
                         {{ form_end(form) }}
                     </article>
                 </div>
-                <div class="row p-3">
-                    <p class="lead text-justify">{{ product.description }}</p>
-                </div>
             </section>
         </div>
     </div>
@@ -44,5 +48,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/rmconcept.js') }}"></script>
+    <script src="{{ asset('js/customization.js') }}"></script>
 {% endblock %}

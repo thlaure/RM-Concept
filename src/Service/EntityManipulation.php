@@ -38,20 +38,47 @@ class EntityManipulation extends AbstractController
     }
 
     /**
-     * Instancie la classe ShoppingCart.
+     * Renvoie un tableau de données contenant toutes les balles en base de données.
      *
-     * @param Customer $customer Client à qui appartient le panier.
-     *
-     * @return ShoppingCart
+     * @return Ball[]|object[]
      */
-    public function createShoppingCart(Customer $customer): ?ShoppingCart
+    public function findAllBalls(): array
     {
-        $shoppingCart = new ShoppingCart();
-        $shoppingCart->setCustomer($customer);
-        $shoppingCart->setProductQuantity(0);
-        $shoppingCart->setIsConfirmed(false);
-        $shoppingCart->setTotalPrice(0);
-        return $shoppingCart;
+        $repository = $this->getDoctrine()->getManager()->getRepository(Ball::class);
+        $result = $repository->findAll();
+        return $result;
+    }
+
+    /**
+     * Récupère l'objet Product dont la référence est passée en paramètre.
+     *
+     * @param string $reference Référence du produit que l'on veut récupérer.
+     *
+     * @return Product|null|object
+     */
+    public function findOneProductByReference(string $reference): ?Product
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
+        $result = $repository->findOneBy(array(
+            'reference' => $reference
+        ));
+        return $result;
+    }
+
+    /**
+     * Renvoie la ligne du panier contenant le produit passée en paramètre.
+     *
+     * @param Product $product Produit qu'il faut récupérer dans le panier.
+     *
+     * @return ShoppingCartProduct|null|object
+     */
+    public function findOneProductByCart(Product $product): ?ShoppingCartProduct
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
+        $result = $repository->findOneBy(array(
+            'product' => $product
+        ));
+        return $result;
     }
 
     /**
@@ -97,6 +124,23 @@ class EntityManipulation extends AbstractController
         $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
         $result = $repository->findAll();
         return $result;
+    }
+
+    /**
+     * Instancie la classe ShoppingCart.
+     *
+     * @param Customer $customer Client à qui appartient le panier.
+     *
+     * @return ShoppingCart
+     */
+    public function createShoppingCart(Customer $customer): ?ShoppingCart
+    {
+        $shoppingCart = new ShoppingCart();
+        $shoppingCart->setCustomer($customer);
+        $shoppingCart->setProductQuantity(0);
+        $shoppingCart->setIsConfirmed(false);
+        $shoppingCart->setTotalPrice(0);
+        return $shoppingCart;
     }
 
     /**

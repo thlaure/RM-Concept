@@ -59,8 +59,8 @@ class ShoppingCartController extends AbstractController
      */
     public function deleteShoppingCartProduct(string $reference, Security $security, EntityManipulation $entityManipulation): ?Response
     {
-        $product = $this->findOneProductByReference($reference);
-        $shoppingCartProduct = $this->findOneProductInCart($product);
+        $product = $entityManipulation->findOneProductByReference($reference);
+        $shoppingCartProduct = $entityManipulation->findOneProductByCart($product);
         $entityManipulation->removeObject($shoppingCartProduct);
         $customer = $security->getUser();
         $shoppingCart = $customer->getShoppingCartNotConfirmed();
@@ -76,38 +76,6 @@ class ShoppingCartController extends AbstractController
     }
 
     /**
-     * Renvoie le produit dont la référence est passée en paramêtre.
-     *
-     * @param string $reference Référence du produit que l'on souhaite récupérer.
-     *
-     * @return Product|null|object
-     */
-    private function findOneProductByReference(string $reference): ?Product
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
-        $result = $repository->findOneBy(array(
-            'reference' => $reference
-        ));
-        return $result;
-    }
-
-    /**
-     * Renvoie la ligne du panier contenant le produit passée en paramètre.
-     *
-     * @param Product $product Produit qu'il faut récupérer dans le panier.
-     *
-     * @return ShoppingCartProduct|null|object
-     */
-    private function findOneProductInCart(Product $product): ?ShoppingCartProduct
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
-        $result = $repository->findOneBy(array(
-            'product' => $product
-        ));
-        return $result;
-    }
-
-    /**
      * Renvoie le prix total du panier.
      *
      * @param ShoppingCart $shoppingCart Panier dont il faut calculer le montant total.
@@ -120,7 +88,7 @@ class ShoppingCartController extends AbstractController
         $totalPrice = 0;
         $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCart);
         foreach ($shoppingCartProducts as $shoppingCartProduct) {
-            $totalPrice += $shoppingCartProduct->getProduct()->getPriceIndividuals() * $shoppingCartProduct->getQuantity();
+            $totalPrice += $shoppingCartProduct->getPrice() * $shoppingCartProduct->getQuantity();
         }
         return $totalPrice;
     }
