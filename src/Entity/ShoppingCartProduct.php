@@ -64,9 +64,18 @@ class ShoppingCartProduct
     private $price;
 
     /**
+     * Image qui a servi à personnaliser le produit.
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $customizationImage;
+
+    /**
+     * Etat auquel appartient le produit.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\State", inversedBy="shoppingCartProducts")
+     */
+    private $state;
 
     /**
      * Accesseur de l'ID de la classe intermédiaire.
@@ -198,14 +207,50 @@ class ShoppingCartProduct
         return $this;
     }
 
+    /**
+     * Accesseur de l'image de personnalisation du produit.
+     *
+     * @return null|string
+     */
     public function getCustomizationImage(): ?string
     {
         return $this->customizationImage;
     }
 
+    /**
+     * Mutateur de l'image de personnlisation du produit.
+     *
+     * @param null|string $customizationImage Image à attribuer au produit.
+     *
+     * @return ShoppingCartProduct
+     */
     public function setCustomizationImage(?string $customizationImage): self
     {
         $this->customizationImage = $customizationImage;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de l'état auquel appartient le produit.
+     *
+     * @return State|null
+     */
+    public function getState(): ?State
+    {
+        return $this->state;
+    }
+
+    /**
+     * Mutateur de l'état auquel appartient le produit.
+     *
+     * @param State|null $state Etat à attribuer au produit.
+     *
+     * @return ShoppingCartProduct
+     */
+    public function setState(?State $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }
