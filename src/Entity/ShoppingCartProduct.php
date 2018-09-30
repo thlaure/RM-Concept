@@ -72,7 +72,7 @@ class ShoppingCartProduct
 
     /**
      * Etat auquel appartient le produit.
-     *
+     * 
      * @ORM\ManyToOne(targetEntity="App\Entity\State", inversedBy="shoppingCartProducts")
      */
     private $state;
