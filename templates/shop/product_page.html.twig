@@ -30,7 +30,11 @@
                             {{ form_label(form.quantity, 'Quantité') }}
                             {{ form_widget(form.quantity, {'attr': {'class': 'form-control rounded-0 w-25'}}) }}
                         </div>
-                        <button type="submit" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
+                        {% if product.quantity >= 12 %}
+                            <button type="submit" class="btn btn-info rounded-0"><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
+                        {% else %}
+                            <button type="button" class="btn btn-info rounded-0" disabled><i class="fas fa-cart-arrow-down"></i> Ajouter au panier</button>
+                        {% endif %}
                         {{ form_end(form) }}
                     </article>
                 </div>

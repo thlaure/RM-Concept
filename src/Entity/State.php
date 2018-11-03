@@ -71,6 +71,13 @@ class State
     private $ballQuantity;
 
     /**
+     * Définit si l'état a été envoyé en production.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isInProduction;
+
+    /**
      * ShoppingCartProduct constructor.
      */
     public function __construct()
@@ -142,7 +149,7 @@ class State
     /**
      * Supprime un produit de l'état.
      * 
-     * @param ShoppingCartProdutc $shoppingCartProduct Produit à supprimer de l'état.
+     * @param ShoppingCartProduct $shoppingCartProduct Produit à supprimer de l'état.
      * 
      * @return State
      */
@@ -186,7 +193,7 @@ class State
     /**
      * Accesseur de l'état de validation de l'état.
      * 
-     * @return bool|return
+     * @return bool|null
      */
     public function getIsValidate(): ?bool
     {
@@ -251,6 +258,30 @@ class State
     public function setBallQuantity(int $ballQuantity): self
     {
         $this->ballQuantity = $ballQuantity;
+
+        return $this;
+    }
+
+    /**
+     * Accesseur de l'état en production.
+     *
+     * @return bool|null
+     */
+    public function getIsInProduction(): ?bool
+    {
+        return $this->isInProduction;
+    }
+
+    /**
+     * Mutateur de l'état en production.
+     *
+     * @param bool $isInProduction Etat en production.
+     *
+     * @return State
+     */
+    public function setIsInProduction(bool $isInProduction): self
+    {
+        $this->isInProduction = $isInProduction;
 
         return $this;
     }

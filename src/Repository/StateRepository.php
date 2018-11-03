@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
+ * Class StateRepository.
+ *
  * @method State|null find($id, $lockMode = null, $lockVersion = null)
  * @method State|null findOneBy(array $criteria, array $orderBy = null)
  * @method State[]    findAll()
@@ -14,9 +16,28 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class StateRepository extends ServiceEntityRepository
 {
+    /**
+     * StateRepository constructor.
+     *
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, State::class);
+    }
+
+    /**
+     * Renvoie un tableau de données avec les états triés par date décroissante.
+     *
+     * @return array
+     */
+    public function findAllStatesOrderByDate(): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT s FROM App\Entity\State s ORDER BY s.stateDate'
+        );
+        return $query->execute();
     }
 
 //    /**

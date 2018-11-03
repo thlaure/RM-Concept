@@ -108,22 +108,26 @@ class ShopController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                $shoppingCart = $customer->getShoppingCartNotConfirmed();
-                $quantity = $shoppingCartProduct->getQuantity();
-                if ($quantity > 0) {
-                    $shoppingCartProduct->setQuantity($quantity);
-                    $shoppingCartProduct->setShoppingCart($shoppingCart);
-                    $shoppingCartProduct->setProduct($product);
-                    $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $quantity);
-                    $entityManipulation->persistObject($shoppingCartProduct);
-                    $shoppingCart->setProductQuantity(count($entityManipulation->findProductsByCart($shoppingCart)));
-                    $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
-                    $entityManipulation->persistObject($shoppingCart);
-                    return $this->returnRender($form, $product,'success');
-                } elseif (!$quantity > 0) {
-                    return $this->returnRender($form, $product,'quantityZero');
+                if ($product->getQuantity() >= 12) {
+                    $shoppingCart = $customer->getShoppingCartNotConfirmed();
+                    $quantity = $shoppingCartProduct->getQuantity();
+                    if ($quantity > 0) {
+                        $shoppingCartProduct->setQuantity($quantity);
+                        $shoppingCartProduct->setShoppingCart($shoppingCart);
+                        $shoppingCartProduct->setProduct($product);
+                        $shoppingCartProduct->setPrice($shoppingCartProduct->getProduct()->getPriceIndividuals() * $quantity);
+                        $entityManipulation->persistObject($shoppingCartProduct);
+                        $shoppingCart->setProductQuantity(count($entityManipulation->findProductsByCart($shoppingCart)));
+                        $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $product->getPriceIndividuals());
+                        $entityManipulation->persistObject($shoppingCart);
+                        return $this->returnRender($form, $product, 'success');
+                    } elseif (!$quantity > 0) {
+                        return $this->returnRender($form, $product, 'quantityZero');
+                    } else {
+                        return $this->returnRender($form, $product, 'quantityInt');
+                    }
                 } else {
-                    return $this->returnRender($form, $product,'quantityInt');
+                    return $this->returnRender($form, $product,'outOfStock');
                 }
             } else {
                 return $this->returnRender($form, $product,'login');
@@ -168,6 +172,14 @@ class ShopController extends AbstractController
             $render = $this->render(
                 'security/login.html.twig', array(
                 'error' => ''
+            ));
+        } elseif ($alert === 'outOfStock') {
+            $render = $this->render(
+            'shop/product_page.html.twig', array(
+                'text_alert' => 'Le produit souhaité est en rupture de stock.',
+                'class_alert' => 'alert-warning',
+                'product' => $product,
+                'form' => $form->createView()
             ));
         } else {
             $render = $this->render(

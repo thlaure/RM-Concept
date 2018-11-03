@@ -17,9 +17,10 @@
                             <div class="row">
                                 <div class="w-25 text-center">Image</div>
                                 <div class="w-20 text-center">Nom</div>
-                                <div class="w-15 text-center">Quantité</div>
-                                <div class="w-15 text-center">Prix unitaire</div>
-                                <div class="w-15 text-center">Prix</div>
+                                <div class="w-10 text-center">Quantité</div>
+                                <div class="w-15 text-center">Personnalisation</div>
+                                <div class="w-10 text-center">Prix unitaire</div>
+                                <div class="w-10 text-center">Prix</div>
                             </div>
                         </li>
                         {% for shopping_cart_product in shopping_cart_products %}
@@ -27,9 +28,14 @@
                                 <div class="row">
                                     <div class="w-25 text-center"><img class="w-25" src="{{ asset('images/balls/') ~ shopping_cart_product.product.image }}" alt="Image non chargée."/></div>
                                     <div class="w-20 text-center">{{ shopping_cart_product.product.name }}</div>
-                                    <div class="w-15 text-center">{{ shopping_cart_product.quantity }}</div>
-                                    <div class="w-15 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', ' ') }} €</div>
-                                    <div class="w-15 text-center">{{ (shopping_cart_product.price * shopping_cart_product.quantity)|number_format(2, ',', ' ') }} €</div>
+                                    <div class="w-10 text-center">{{ shopping_cart_product.quantity }}</div>
+                                    {% if shopping_cart_product.isCustomized == true %}
+                                        <div class="w-15 text-center">Oui</div>
+                                    {% else %}
+                                        <div class="w-15 text-center">Non</div>
+                                    {% endif %}
+                                    <div class="w-10 text-center">{{ shopping_cart_product.product.priceIndividuals|number_format(2, ',', ' ') }} €</div>
+                                    <div class="w-10 text-center">{{ (shopping_cart_product.price)|number_format(2, ',', ' ') }} €</div>
                                     <div class="w-10 text-center"><a class="btn btn-info rounded-0" href="{{ path('delete_product', { 'reference': shopping_cart_product.product.reference }) }}"><i class="far fa-trash-alt"></i></a></div>
                                 </div>
                             </li>

@@ -17,6 +17,9 @@
                         {% for product in products %}
                             <div class="col-md-3">
                                 <div class="card shadow-sm rounded-0 mb-4">
+                                    {% if product.quantity < 12 %}
+                                        <span class="badge badge-danger rounded-0">Rupture de stock</span>
+                                    {% endif %}
                                     <div class="p-2 w-75 m-auto">
                                         <a href="{{ path('product-page', { 'reference': product.reference }) }}">
                                             <img class="card-img-top" src="{{ asset('images/balls/' ~ product.image) }}" alt="Image non chargée">

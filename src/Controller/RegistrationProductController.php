@@ -26,7 +26,7 @@ class RegistrationProductController extends AbstractController
     /**
      * Affiche la page d'enregistrement de produits.
      *
-     * @Route("/registration/product", name="registration_product")
+     * @Route("admin/registration/product", name="registration_product")
      *
      * @param Request $request
      * @param EntityManipulation $entityManipulation

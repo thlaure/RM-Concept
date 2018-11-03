@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use Fpdf\Fpdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class PrintController.
+ * Class AdminHomeController.
  *
  * @category Symfony4
  * @package App\Controller
@@ -14,16 +14,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  * @license  https://www.gnu.org/licenses/license-list.fr.html GPL
  * @link     https://symfony.com/
  */
-class PrintController extends AbstractController
+class AdminHomeController extends AbstractController
 {
     /**
-     * Crée un fichier PDF.
+     * Affiche la page d'accueil de l'interface d'administration.
      *
-     * @param string $file Image à imprimer sur le fichier PDF.
+     * @Route("/admin", name="admin_home")
      */
-    public function print(string $file)
+    public function AdminHome()
     {
-        $fpdf = new Fpdf();
-        $fpdf->Image($file);
+        return $this->render('admin_home/admin_home.html.twig');
     }
 }

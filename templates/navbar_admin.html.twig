@@ -6,7 +6,7 @@
             <div class="collapse navbar-collapse" id="navbarAdmin">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-columns"></i> Tableau de bord</a>
+                        <a class="nav-link" href="{{ path('admin_home') }}"><i class="fas fa-columns"></i> Tableau de bord</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -17,6 +17,7 @@
                             <a class="dropdown-item" href="#"><i class="fas fa-angle-right"></i> Suppression</a>
                             <a class="dropdown-item" href="#"><i class="fas fa-angle-right"></i> Modification</a>
                             <a class="dropdown-item" href="{{ path('admin_stock') }}"><i class="fas fa-angle-right"></i> Stocks</a>
+                            <a class="dropdown-item" href="{{ path('admin_state') }}"><i class="fas fa-angle-right"></i> Etats</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">

@@ -8,6 +8,7 @@ use App\Entity\Customer;
 use App\Entity\Product;
 use App\Entity\ShoppingCart;
 use App\Entity\ShoppingCartProduct;
+use App\Entity\State;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
@@ -46,6 +47,18 @@ class EntityManipulation extends AbstractController
     {
         $repository = $this->getDoctrine()->getManager()->getRepository(Ball::class);
         $result = $repository->findAll();
+        return $result;
+    }
+
+    /**
+     * Renvoie un tableau de données avec les états triés par date.
+     *
+     * @return array
+     */
+    public function findAllStatesOrderByDate():array
+    {
+        $repository = $this->getDoctrine()->getRepository(State::class);
+        $result = $repository->findAllStatesOrderByDate();
         return $result;
     }
 
@@ -127,6 +140,38 @@ class EntityManipulation extends AbstractController
     }
 
     /**
+     * Renvoie un tableau de données contenant les produits du client et du panier passés en paramètres
+     * dont l'état est non assigné.
+     *
+     * @param ShoppingCart $shoppingCart
+     *
+     * @return array
+     */
+    public function findProductsByStateIsNull(ShoppingCart $shoppingCart): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(ShoppingCartProduct::class);
+        $result = $repository->findBy(array(
+            'shoppingCart' => $shoppingCart,
+            'state' => null
+        ));
+        return $result;
+    }
+
+    /**
+     * Renvoie un tableau de données contenant l'état non plein en base de données.
+     *
+     * @return State
+     */
+    public function findOneStateByIsNotFull(): State
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(State::class);
+        $result = $repository->findOneBy(array(
+            'isFull' => false
+        ));
+        return $result;
+    }
+
+    /**
      * Instancie la classe ShoppingCart.
      *
      * @param Customer $customer Client à qui appartient le panier.
@@ -141,6 +186,22 @@ class EntityManipulation extends AbstractController
         $shoppingCart->setIsConfirmed(false);
         $shoppingCart->setTotalPrice(0);
         return $shoppingCart;
+    }
+
+    /**
+     * Instancie un objet de la classe State;
+     *
+     * @return State|null
+     */
+    public function createState(): ?State
+    {
+        $state = new State();
+        $state->setBallQuantity(0);
+        $state->setIsFull(false);
+        $state->setIsValidate(false);
+        $state->setSize(36);
+        $state->setStateDate(new \DateTime());
+        return $state;
     }
 
     /**

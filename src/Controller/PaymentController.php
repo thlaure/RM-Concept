@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Command;
+use App\Entity\Customer;
 use App\Entity\ShoppingCart;
+use App\Entity\State;
 use App\Form\PaymentType;
 use App\Service\EntityManipulation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,10 +54,12 @@ class PaymentController extends AbstractController
                     $this->reduceStock($shoppingCart, $entityManipulation);
                     $entityManipulation->persistObject($shoppingCart);
                     $entityManipulation->persistObject($command);
-                    $shoppingCart = $entityManipulation->createShoppingCart($customer);
-                    $customer->setShoppingCartNotConfirmed($shoppingCart);
-                    $entityManipulation->persistObject($shoppingCart);
+                    $newShoppingCart = $entityManipulation->createShoppingCart($customer);
+                    $customer->setShoppingCartNotConfirmed($newShoppingCart);
+                    $entityManipulation->persistObject($newShoppingCart);
                     $entityManipulation->persistObject($customer);
+                    $state = $entityManipulation->findOneStateByIsNotFull();
+                    $this->stateTreatment($entityManipulation, $state, $shoppingCart);
                     return $this->render('payment/payment_confirmation.html.twig', array(
                         'class_alert' => 'alert-success',
                         'text_alert' => 'Paiement effectué.'
@@ -105,5 +109,31 @@ class PaymentController extends AbstractController
             'isConfirmed' => true
         ));
         return $result !== null;
+    }
+
+    /**
+     * Permet de faire le traitement lié à l'état courant.
+     *
+     * @param EntityManipulation $entityManipulation
+     * @param State $state
+     * @param ShoppingCart $shoppingCart
+     */
+    private function stateTreatment(EntityManipulation $entityManipulation, State $state, ShoppingCart $shoppingCart): void
+    {
+        $shoppingCartProductsStateNull = $entityManipulation->findProductsByStateIsNull($shoppingCart);
+        foreach ($shoppingCartProductsStateNull as $shoppingCartProduct) {
+            $product = $shoppingCartProduct->getProduct();
+            $purchasedProductQuantity = $shoppingCartProduct->getQuantity() * $product->getNumberInPack();
+            $availablePlaceState = $state->getSize() - $state->getBallQuantity();
+            if ($purchasedProductQuantity > $availablePlaceState) {
+                $state->setIsFull(true);
+                $entityManipulation->persistObject($state);
+                $state = $entityManipulation->createState();
+            }
+            $shoppingCartProduct->setState($state);
+            $state->setBallQuantity($state->getBallQuantity() + $purchasedProductQuantity);
+            $entityManipulation->persistObject($shoppingCartProduct);
+            $entityManipulation->persistObject($state);
+        }
     }
 }

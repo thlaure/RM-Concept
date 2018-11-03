@@ -48,25 +48,29 @@ class CustomizationController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                $shoppingCart = $customer->getShoppingCartNotConfirmed();
-                $quantity = $shoppingCartProduct->getQuantity();
-                $customizationImage = $form['customization_image']->getData();
-                if ($fileManipulation->testImageFormat($customizationImage) && $quantity > 0) {
-                    $shoppingCartProduct->setQuantity($quantity);
-                    $shoppingCartProduct->setCustomizationImage($fileManipulation->customizableImageProcessing($customizationImage));
-                    $shoppingCartProduct->setProduct($product);
-                    $shoppingCartProduct->setShoppingCart($shoppingCart);
-                    $shoppingCartProduct->setPrice(($shoppingCartProduct->getProduct()->getPriceIndividuals() + $customizationPrice) * $quantity);
-                    $shoppingCartProduct->setIsCustomized(true);
-                    $entityManipulation->persistObject($shoppingCartProduct);
-                    $shoppingCart->setProductQuantity(count($entityManipulation->findProductsByCart($shoppingCart)));
-                    $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $shoppingCartProduct->getPrice());
-                    $entityManipulation->persistObject($shoppingCart);
-                    return $this->returnRender($form, $product, 'success');
-                } elseif (!$quantity > 0) {
-                    return $this->returnRender($form, $product, 'quantityZero');
+                if ($product->getQuantity() >= 12) {
+                    $shoppingCart = $customer->getShoppingCartNotConfirmed();
+                    $quantity = $shoppingCartProduct->getQuantity();
+                    $customizationImage = $form['customization_image']->getData();
+                    if ($fileManipulation->testImageFormat($customizationImage) && $quantity > 0) {
+                        $shoppingCartProduct->setQuantity($quantity);
+                        $shoppingCartProduct->setCustomizationImage($fileManipulation->customizableImageProcessing($customizationImage));
+                        $shoppingCartProduct->setProduct($product);
+                        $shoppingCartProduct->setShoppingCart($shoppingCart);
+                        $shoppingCartProduct->setPrice(($shoppingCartProduct->getProduct()->getPriceIndividuals() + $customizationPrice) * $quantity);
+                        $shoppingCartProduct->setIsCustomized(true);
+                        $entityManipulation->persistObject($shoppingCartProduct);
+                        $shoppingCart->setProductQuantity(count($entityManipulation->findProductsByCart($shoppingCart)));
+                        $shoppingCart->setTotalPrice($shoppingCart->getTotalPrice() + $shoppingCartProduct->getPrice());
+                        $entityManipulation->persistObject($shoppingCart);
+                        return $this->returnRender($form, $product, 'success');
+                    } elseif (!$quantity > 0) {
+                        return $this->returnRender($form, $product, 'quantityZero');
+                    } else {
+                        return $this->returnRender($form, $product, 'quantityInt');
+                    }
                 } else {
-                    return $this->returnRender($form, $product, 'quantityInt');
+                    return $this->returnRender($form, $product, 'outOfStock');
                 }
             } else {
                 return $this->returnRender($form, $product, 'login');
@@ -111,6 +115,14 @@ class CustomizationController extends AbstractController
             $render = $this->render(
                 'security/login.html.twig', array(
                 'error' => ''
+            ));
+        } elseif ($alert === 'outOfStock') {
+            $render = $this->render(
+                'shop/product_page.html.twig', array(
+                'text_alert' => 'Le produit souhaité est en rupture de stock.',
+                'class_alert' => 'alert-warning',
+                'product' => $product,
+                'form' => $form->createView()
             ));
         } else {
             $render = $this->render(
