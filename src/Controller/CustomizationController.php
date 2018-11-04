@@ -54,7 +54,7 @@ class CustomizationController extends AbstractController
                     $customizationImage = $form['customization_image']->getData();
                     if ($fileManipulation->testImageFormat($customizationImage) && $quantity > 0) {
                         $shoppingCartProduct->setQuantity($quantity);
-                        $shoppingCartProduct->setCustomizationImage($fileManipulation->customizableImageProcessing($customizationImage));
+                        $shoppingCartProduct->setCustomizationImage($fileManipulation->customizedImageProcessing($customizationImage));
                         $shoppingCartProduct->setProduct($product);
                         $shoppingCartProduct->setShoppingCart($shoppingCart);
                         $shoppingCartProduct->setPrice(($shoppingCartProduct->getProduct()->getPriceIndividuals() + $customizationPrice) * $quantity);

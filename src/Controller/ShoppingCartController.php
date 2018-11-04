@@ -51,7 +51,7 @@ class ShoppingCartController extends AbstractController
      *
      * @Route("/shopping-cart/delete-product/{reference}", name="delete_product")
      *
-     * @param string $reference Référence du produit à supprimer du panier.
+     * @param string $reference RÃ©fÃ©rence du produit Ã  supprimer du panier.
      * @param Security $security
      * @param EntityManipulation $entityManipulation
      *

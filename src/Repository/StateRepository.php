@@ -35,7 +35,7 @@ class StateRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
-            'SELECT s FROM App\Entity\State s ORDER BY s.stateDate'
+            'SELECT s FROM App\Entity\State s ORDER BY s.stateDate DESC'
         );
         return $query->execute();
     }

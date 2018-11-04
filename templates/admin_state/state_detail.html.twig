@@ -1,0 +1,55 @@
+{% extends 'navbar_admin.html.twig' %}
+
+{% block title %}{{ parent() }} - Détail{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div class="store pb-5 mb-5 pt-4">
+        <div class="container">
+            <section class="mt-4">
+                <h1 class="display-4 text-center mb-4">Détail de l'état n°{{ state.id }}</h1>
+                <article class="rounded-0 shadow-sm w-50 mx-auto mb-4">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Date : {{ state.stateDate|date('d/m/Y') }}</li>
+                        <li class="list-group-item">Nombre de balles : {{ state.ballQuantity }}</li>
+                        {% if state.isInProduction == false and state.isValidate == false %}
+                            <li class="list-group-item list-group-item-dark">Etat de mise en production : Non</li>
+                            <li class="list-group-item list-group-item-dark">Etat de validation : Non</li>
+                        {% elseif state.isInProduction == true and state.isValidate == false %}
+                            <li class="list-group-item list-group-item-info">Etat de mise en production :</li>
+                            <li class="list-group-item list-group-item-dark">Etat de validation :</li>
+                        {% elseif state.isInProduction == true and state.isValidate == true %}
+                            <li class="list-group-item">Etat de mise en production :</li>
+                            <li class="list-group-item">Etat de validation :</li>
+                        {% else %}
+                            <li class="list-group-item list-group-item-danger">Etat de mise en production :</li>
+                            <li class="list-group-item list-group-item-danger">Etat de validation :</li>
+                        {% endif %}
+                    </ul>
+                </article>
+                <article class="shadow-sm mx-auto">
+                    <ul class="list-group rounded-0 shadow-sm">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="w-25 text-center">Image</div>
+                                <div class="w-25 text-center">Client</div>
+                                <div class="w-25 text-center">N° de commande</div>
+                                <div class="w-25 text-center">Nombre de balles</div>
+                            </div>
+                        </li>
+                        {% for shopping_cart_product in shopping_cart_products %}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="w-25 text-center">{{ shopping_cart_product.product.image }}</div>
+                                    <div class="w-25 text-center">{{ shopping_cart_product.shoppingCart.customer.firstName }} {{ shopping_cart_product.shoppingCart.customer.name|upper }}</div>
+                                    <div class="w-25 text-center">{{ shopping_cart_product.shoppingCart.command.reference }}</div>
+                                    <div class="w-25 text-center">{{ shopping_cart_product.quantity }}</div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </article>
+            </section>
+        </div>
+    </div>
+{% endblock %}

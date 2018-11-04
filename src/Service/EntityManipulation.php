@@ -51,6 +51,22 @@ class EntityManipulation extends AbstractController
     }
 
     /**
+     * Renvoie l'état dont l'ID est passé en paramètre.
+     *
+     * @param int $id ID de l'état à récupérer.
+     *
+     * @return State|null
+     */
+    public function findOneStateById(int $id): ?State
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(State::class);
+        $result = $repository->findOneBy(array(
+            'id' => $id
+        ));
+        return $result;
+    }
+
+    /**
      * Renvoie un tableau de données avec les états triés par date.
      *
      * @return array
