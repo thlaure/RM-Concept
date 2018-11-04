@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class AdminHomeController.
+ *
+ * @IsGranted("ROLE_ADMIN")
  *
  * @category Symfony4
  * @package App\Controller

@@ -123,17 +123,19 @@ class PaymentController extends AbstractController
         $shoppingCartProductsStateNull = $entityManipulation->findProductsByStateIsNull($shoppingCart);
         foreach ($shoppingCartProductsStateNull as $shoppingCartProduct) {
             $product = $shoppingCartProduct->getProduct();
-            $purchasedProductQuantity = $shoppingCartProduct->getQuantity() * $product->getNumberInPack();
-            $availablePlaceState = $state->getSize() - $state->getBallQuantity();
-            if ($purchasedProductQuantity > $availablePlaceState) {
-                $state->setIsFull(true);
+            if (gettype($product) === 'Ball' && $product->getImageToCustomize() !== null) {
+                $purchasedProductQuantity = $shoppingCartProduct->getQuantity() * $product->getNumberInPack();
+                $availablePlaceState = $state->getSize() - $state->getBallQuantity();
+                if ($purchasedProductQuantity > $availablePlaceState) {
+                    $state->setIsFull(true);
+                    $entityManipulation->persistObject($state);
+                    $state = $entityManipulation->createState();
+                }
+                $shoppingCartProduct->setState($state);
+                $state->setBallQuantity($state->getBallQuantity() + $purchasedProductQuantity);
+                $entityManipulation->persistObject($shoppingCartProduct);
                 $entityManipulation->persistObject($state);
-                $state = $entityManipulation->createState();
             }
-            $shoppingCartProduct->setState($state);
-            $state->setBallQuantity($state->getBallQuantity() + $purchasedProductQuantity);
-            $entityManipulation->persistObject($shoppingCartProduct);
-            $entityManipulation->persistObject($state);
         }
     }
 }
