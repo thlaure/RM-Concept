@@ -1,12 +1,10 @@
 <?php
 
 namespace App\Controller;
-
 use App\Entity\Ball;
 use App\Form\BallType;
 use App\Service\EntityManipulation;
 use App\Service\FileManipulation;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class RegistrationProductController.
- *
- * @IsGranted("ROLE_ADMIN")
  *
  * @category Symfony4
  * @package  App\Controller
@@ -64,7 +60,6 @@ class RegistrationProductController extends AbstractController
         }
         return $this->returnRender($form, '');
     }
-
     /**
      * Vérifie l'existence de la référence en base de données.
      *
@@ -82,7 +77,6 @@ class RegistrationProductController extends AbstractController
         );
         return $result !== null;
     }
-
     /**
      * Renvoie le message approprié en fonction du besoin.
      *

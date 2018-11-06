@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Ball;
 use App\Form\ProductQuantityType;
 use App\Service\EntityManipulation;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,8 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class StockController.
- *
- * @IsGranted("ROLE_ADMIN")
  *
  * @category Symfony4
  * @package App\Controller
@@ -37,7 +34,7 @@ class StockController extends AbstractController
      */
     public function stock(Request $request, EntityManipulation $entityManipulation): ?Response
     {
-        $products = $entityManipulation->findAllProducts();
+        $products = $entityManipulation->findProductsByNumberInPack(3);
         $ball = new Ball();
         $form = $this->createForm(ProductQuantityType::class, $ball);
         $form->handleRequest($request);

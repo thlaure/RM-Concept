@@ -88,7 +88,7 @@ class ShoppingCartController extends AbstractController
         $totalPrice = 0;
         $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCart);
         foreach ($shoppingCartProducts as $shoppingCartProduct) {
-            $totalPrice += $shoppingCartProduct->getPrice() * $shoppingCartProduct->getQuantity();
+            $totalPrice += $shoppingCartProduct->getPrice();
         }
         return $totalPrice;
     }

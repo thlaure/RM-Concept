@@ -23,6 +23,38 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class EntityManipulation extends AbstractController
 {
     /**
+     * Renvoie un tableau de données avec tous les produits dont le nom est passé en paramètre.
+     *
+     * @param string $name Nom du produit à récupérer.
+     *
+     * @return array
+     */
+    public function findProductsByName(string $name): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
+        $result = $repository->findBy(array(
+            'name' => $name
+        ));
+        return $result;
+    }
+
+    /**
+     * Renvoie un tableau de données avec tous les produits dont les critères sont passés en paramètres.
+     *
+     * @param int $numberInPack
+     *
+     * @return array
+     */
+    public function findProductsByNumberInPack(int $numberInPack): array
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository(Ball::class);
+        $result = $repository->findBy(array(
+            'numberInPack' => $numberInPack
+        ));
+        return $result;
+    }
+
+    /**
      * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
      *
      * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.

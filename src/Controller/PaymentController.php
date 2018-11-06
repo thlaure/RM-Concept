@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Command;
-use App\Entity\Customer;
 use App\Entity\ShoppingCart;
 use App\Entity\State;
 use App\Form\PaymentType;
@@ -88,9 +87,12 @@ class PaymentController extends AbstractController
         $shoppingCartProducts = $entityManipulation->findProductsByCart($shoppingCart);
         foreach ($shoppingCartProducts as $shoppingCartProduct) {
             $product = $shoppingCartProduct->getProduct();
+            $products = $entityManipulation->findProductsByName($product->getName());
             $purchasedProductQuantity = $shoppingCartProduct->getQuantity() * $product->getNumberInPack();
-            $product->setQuantity($product->getQuantity() - $purchasedProductQuantity);
-            $entityManipulation->persistObject($product);
+            foreach ($products as $product) {
+                $product->setQuantity($product->getQuantity() - $purchasedProductQuantity);
+                $entityManipulation->persistObject($product);
+            }
         }
     }
 
@@ -122,8 +124,8 @@ class PaymentController extends AbstractController
     {
         $shoppingCartProductsStateNull = $entityManipulation->findProductsByStateIsNull($shoppingCart);
         foreach ($shoppingCartProductsStateNull as $shoppingCartProduct) {
-            $product = $shoppingCartProduct->getProduct();
-            if (gettype($product) === 'Ball' && $product->getImageToCustomize() !== null) {
+            if ($shoppingCartProduct->getIsCustomized() === true) {
+                $product = $shoppingCartProduct->getProduct();
                 $purchasedProductQuantity = $shoppingCartProduct->getQuantity() * $product->getNumberInPack();
                 $availablePlaceState = $state->getSize() - $state->getBallQuantity();
                 if ($purchasedProductQuantity > $availablePlaceState) {

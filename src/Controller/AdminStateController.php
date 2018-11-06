@@ -3,15 +3,12 @@
 namespace App\Controller;
 
 use App\Service\EntityManipulation;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class AdminStateController.
- *
- * @IsGranted("ROLE_ADMIN")
  *
  * @category Symfony4
  * @package App\Controller
