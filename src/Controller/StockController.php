@@ -34,7 +34,7 @@ class StockController extends AbstractController
      */
     public function stock(Request $request, EntityManipulation $entityManipulation): ?Response
     {
-        $products = $entityManipulation->findProductsByNumberInPack(3);
+        $products = $entityManipulation->findAllProducts();
         $ball = new Ball();
         $form = $this->createForm(ProductQuantityType::class, $ball);
         $form->handleRequest($request);
@@ -52,11 +52,11 @@ class StockController extends AbstractController
     }
 
     /**
-     * Renvoie le message approprié en fonction du besoin.
+     * Renvoie le message appropriÃ© en fonction du besoin.
      *
-     * @param FormInterface $form Formulaire d'ajout de quantité.
-     * @param array $products Produits à afficher sur la page.
-     * @param string $alert Alerte définie.
+     * @param FormInterface $form Formulaire d'ajout de quantitÃ©.
+     * @param array $products Produits Ã  afficher sur la page.
+     * @param string $alert Alerte dÃ©finie.
      *
      * @return null|Response
      */
@@ -66,14 +66,14 @@ class StockController extends AbstractController
             $render = $this->render('stock/stock.html.twig', array(
                 'form' => $form->createView(),
                 'products' => $products,
-                'text_alert' => 'Quantité ajoutée.',
+                'text_alert' => 'QuantitÃ© ajoutÃ©e.',
                 'class_alert' => 'alert-success'
             ));
         } elseif ($alert === 'quantity') {
             $render = $this->render('stock/stock.html.twig', array(
                 'form' => $form->createView(),
                 'products' => $products,
-                'text_alert' => 'La quantité doit être supérieure à 0.',
+                'text_alert' => 'La quantitÃ© doit Ãªtre supÃ©rieure Ã  0.',
                 'class_alert' => 'alert-warning'
             ));
         } else {

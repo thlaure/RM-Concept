@@ -39,22 +39,6 @@ class EntityManipulation extends AbstractController
     }
 
     /**
-     * Renvoie un tableau de données avec tous les produits dont les critères sont passés en paramètres.
-     *
-     * @param int $numberInPack
-     *
-     * @return array
-     */
-    public function findProductsByNumberInPack(int $numberInPack): array
-    {
-        $repository = $this->getDoctrine()->getManager()->getRepository(Ball::class);
-        $result = $repository->findBy(array(
-            'numberInPack' => $numberInPack
-        ));
-        return $result;
-    }
-
-    /**
      * Renvoie un tableau avec tous les produits présents dans le panier passé en paramètre.
      *
      * @param ShoppingCart $shoppingCart Panier dont on veut récupérer le contenu.
